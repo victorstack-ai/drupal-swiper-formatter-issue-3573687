@@ -1,0 +1,15 @@
+.swiper-container {
+  max-width: 100%;
+  margin: 0 auto 1rem auto;
+  width: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.swiper-container.swiper-horizontal.progressbar > .swiper-wrapper {
+  padding: 1rem 0;
+}
+
+.swiper-container.swiper-vertical.progressbar > .swiper-wrapper {
+  padding: 0 1rem;
+}
