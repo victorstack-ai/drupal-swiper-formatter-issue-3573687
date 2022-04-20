@@ -1,24 +1,13 @@
 .swiper-container {
-/*   max-width: 100%; */
   margin: 0 auto 1rem auto;
-/*   width: 100%; */
   overflow: hidden;
   position: relative;
 }
 
+/* It seems like swipers may be quite unstable without this */
 .swiper-container .swiper-slide {
   width: inherit !important;
 }
-
-/*
-.swiper-container .swiper-slide-image {
-  text-align: center;
-}
-
-.swiper-container .swiper-slide-image .swiper-caption {
-  text-align: left;
-}
-*/
 
 .swiper-container.swiper-horizontal.progressbar > .swiper-wrapper {
   padding: 1rem 0;
