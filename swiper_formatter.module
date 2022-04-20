@@ -10,6 +10,8 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Render\Markup;
 
+use Drupal\Component\Utility\Html;
+
 use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutable;
 
@@ -39,7 +41,7 @@ and there can be unlimited number of these, each ready as a sort of pre-defined 
       return $output;
 
     case 'entity.swiper_formatter.collection':
-      return '<p>' . t('Image styles commonly provide thumbnail sizes by scaling and cropping images, but can also add various effects before an image is displayed. When an image is displayed with a style, a new file is created and the original image is left unchanged.') . '</p>';
+      return '<p>' . t('Here is the list of existing Swiper templates.') . '</p>';
 
     case 'entity.swiper_formatter.add_form':
     case 'entity.swiper_formatter.edit_form':
@@ -283,7 +285,11 @@ function template_preprocess_swiper_formatter(&$variables) {
     $item['#theme'] = 'swiper_formatter_slide';
     $item['#settings'] = $formatter_settings;
     $item['#object'] = $variables['object'];
-    $item['#attributes']['class'] = ['swiper-slide'];
+    $item['#attributes']['class'] = [
+      'swiper-slide',
+      'swiper-slide-' . Html::cleanCssIdentifier($formatter_settings['field_type']),
+    ];
+
   }
 
   // Add our js settings and libraries.

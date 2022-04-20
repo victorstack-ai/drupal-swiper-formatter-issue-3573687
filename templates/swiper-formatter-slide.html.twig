@@ -26,13 +26,7 @@
       {% endif %}
       <div class="swiper-lazy-preloader"></div>
     {% else %}   
-      
-      {% if slide_url %}
-        <a href="{{ slide_url }}">{{ slide }}</a>
-      {% else %}
-        {{ slide }}
-      {% endif %}
-        
+      {{ slide }}        
     {% endif %}
       
     {% if caption %}
