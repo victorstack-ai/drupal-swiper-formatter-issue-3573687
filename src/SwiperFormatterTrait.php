@@ -231,8 +231,7 @@ trait SwiperFormatterTrait {
   public function viewElements(FieldItemListInterface $items, $langcode) {
 
     $elements = [];
-    // The ProcessedText element already handles cache context & tag bubbling.
-    // @see \Drupal\filter\Element\ProcessedText::preRenderText()
+
     $output = parent::viewElements($items, $langcode);
 
     $type = $this->fieldDefinition->getFieldStorageDefinition()->getType();
@@ -264,9 +263,15 @@ trait SwiperFormatterTrait {
       $formatter_settings += ['id' => $id];
 
       foreach ($output as $delta => &$item) {
+
         if ($type == 'image' && $formatter_settings['lazy']['enabled']) {
-          $image_style = $this->entityTypeManager->getStorage('image_style')->load($formatter_settings['image_style']);
-          $item['#background'] = $image_style->buildUrl($item['#item']->entity->getFileUri());
+          if ($formatter_settings['image_style']) {
+            $image_style = $this->entityTypeManager->getStorage('image_style')->load($formatter_settings['image_style']);
+            $item['#background'] = $image_style->buildUrl($item['#item']->entity->getFileUri());
+          }
+          else {
+            $item['#background'] = $item['#item']->entity->createFileUrl();
+          }
         }
 
         if (isset($formatter_settings['caption'])) {

@@ -96,7 +96,7 @@ class SwiperFormatterForm extends EntityForm {
       '#title' => $this->t('Swiper library source'),
       '#description' => $this->t('Under some conditions, usage of some themes and/or other libraries, some issues may occur. Set to local library to try to resolve, but please first make sure to have mandatory for <em>Local</em> <a target="_blank" href="https://unpkg.com/swiper@8/swiper-bundle.min.js">swiper-bundle.js</a> and <a target="_blank" href="https://unpkg.com/swiper@8/swiper-bundle.css">swiper-bundle.min.css</a> and/or mandatory for <em>Local minified</em> <a target="_blank" href="https://unpkg.com/swiper@8/swiper-bundle.min.js">swiper-bundle.min.js</a> and <a target="_blank" href="https://unpkg.com/swiper@8/swiper-bundle.min.css">swiper-bundle.min.css</a> <strong>downloaded and placed in <strong>/libraries/swiper/</strong> folder.</strong>'),
       '#options' => [
-        'remote' => $this->t('Remote'),
+        'remote' => $this->t('Remote (cdn)'),
         'local' => $this->t('Local'),
         'local_minified' => $this->t('Local minified'),
       ],
@@ -196,7 +196,7 @@ class SwiperFormatterForm extends EntityForm {
       '#type' => 'checkbox',
       '#title' => $this->t('Rewind'),
       '#default_value' => $default_values['rewind'],
-      '#description' => $this->t('Enable rewind, click n next nav buttin on last slide loads first slide, click on pre button on first slide reqinds to last one. <strong>Should not be used together with loop mode.</strong>'),
+      '#description' => $this->t('Enable rewind, click on next nav button on last slide loads first slide, click on prev button on first slide rewinds to the last one. <strong>Should not be used together with loop mode.</strong>'),
     ];
 
     $form['swiper_options']['slides']['centeredSlides'] = [
@@ -239,12 +239,12 @@ class SwiperFormatterForm extends EntityForm {
       '#type' => 'checkbox',
       '#title' => $this->t('Grab cursor type'),
       '#default_value' => $default_values['grabCursor'],
-      '#description' => $this->t('This is basically CSS <em>cursor: grab</em>, may be useful on desktops.'),
+      '#description' => $this->t('This is basically CSS <em>cursor: grab</em>, may be useful on desktops. Does not work with CSS mode.'),
     ];
 
     $form['swiper_options']['slides']['cssMode'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Css mode'),
+      '#title' => $this->t('CSS mode'),
       '#default_value' => $default_values['cssMode'],
       '#description' => $this->t('When enabled it will use modern CSS Scroll Snap API. It doesn\'t support all of Swiper\'s features, but potentially should bring a much better performance in simple configurations. Please make sure to check <a href="https://swiperjs.com/swiper-api#param-cssMode" target="_blank">here</a>'),
     ];
@@ -487,7 +487,7 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['lazy']['loadPrevNextAmount'] = [
       '#type' => 'number',
       '#title' => $this->t('Load prev/next amount'),
-      '#default_value' => $default_values['lazy']['loadPrevNext'],
+      '#default_value' => $default_values['lazy']['loadPrevNextAmount'],
       '#description' => $this->t("Amount of next/prev slides to preload lazy images in. Can't be less than Slides per view."),
       '#states' => [
         'visible' => [

@@ -18,7 +18,7 @@ entity.swiper_formatter.edit_form:
   path: '/admin/config/content/swiper-formatter/{swiper_formatter}'
   defaults:
     _entity_form: 'swiper_formatter.edit'
-    _title: 'Edit Swiper'
+    _title: 'Edit Swiper template'
   requirements:
     _permission: 'administer swiper_formatter'
 

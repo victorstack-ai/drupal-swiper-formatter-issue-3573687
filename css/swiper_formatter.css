@@ -1,12 +1,16 @@
+/* It seems like swipers may be quite unstable without this two first rules */
 .swiper-container {
-  margin: 0 auto 1rem auto;
+  margin: 1rem auto 1rem auto;
   overflow: hidden;
   position: relative;
 }
 
-/* It seems like swipers may be quite unstable without this */
 .swiper-container .swiper-slide {
   width: inherit !important;
+}
+
+.swiper-container .swiper-slide-image img {
+  width: auto;
 }
 
 .swiper-container.swiper-horizontal.progressbar > .swiper-wrapper {
