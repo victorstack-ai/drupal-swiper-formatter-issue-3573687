@@ -33,7 +33,7 @@ navigation:
   hideOnClick: false
 pagination:
   enabled: false
-  type: null
+  type: 'bullets'
   dynamicBullets: false
   clickable: false
 lazy:
