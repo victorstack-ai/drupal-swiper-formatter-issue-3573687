@@ -115,7 +115,7 @@ trait SwiperFormatterTrait {
    */
   public static function defaultSettings() {
     return [
-      'template' => NULL,
+      'template' => 'default',
       'caption' => NULL,
       'custom_link' => NULL,
     ] + parent::defaultSettings();
@@ -131,6 +131,7 @@ trait SwiperFormatterTrait {
     $entity_type = $this->fieldDefinition->getTargetEntityTypeId();
     $fields = $this->entityFieldManager->getFieldDefinitions($entity_type, $this->fieldDefinition->getTargetBundle());
     $entity_fields = [];
+    $swiper_entity = NULL;
 
     foreach ($fields as $field_name => $field) {
       $entity_fields[$field_name] = [
@@ -142,8 +143,9 @@ trait SwiperFormatterTrait {
     $settings = $this->fieldDefinition->getSettings();
 
     if (!empty($this->getSetting('template'))) {
-      $swiper_entity = $this->swiperFormatter->load($this->getSetting('template'));
-      $settings += $swiper_entity->get('swiper_options');
+      if ($swiper_entity = $this->swiperFormatter->load($this->getSetting('template'))) {
+        $settings += $swiper_entity->get('swiper_options');
+      }
     }
 
     $element += [
