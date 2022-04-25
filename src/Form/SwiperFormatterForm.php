@@ -173,7 +173,12 @@ class SwiperFormatterForm extends EntityForm {
       '#type' => 'radios',
       '#title' => $this->t('Swipe effect'),
       '#default_value' => $default_values['effect'],
-      '#description' => $this->t('Choose one of a few Swiper effects. See <a target"_blank" href="https://swiperjs.com/swiper-api#param-effect">here</a>.'),
+      '#description' => $this->t('Choose one of a few Swiper effects. See <a target="_blank" href="https://swiperjs.com/swiper-api#param-effect">here</a>.<br /><em>Creative</em> effect seems unstable at the moment, therefore disabled.'),
+      '#process' => [
+        ['\Drupal\Core\Render\Element\Radios', 'processRadios'],
+        [get_class($this), 'processEffect'],
+      ],
+
       '#options' => [
         'slide' => $this->t('Slide'),
         'fade' => $this->t('Fade'),
@@ -280,7 +285,7 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['autoplay'] = [
       '#type' => 'details',
       '#title' => $this->t('Autoplay settings'),
-      '#description' => $this->t('Swiper Autoplay module, see <a target"_blank" href="https://swiperjs.com/swiper-api#autoplay">Swiper.js | Autoplay</a>.'),
+      '#description' => $this->t('Swiper Autoplay module, see <a target="_blank" href="https://swiperjs.com/swiper-api#autoplay">Swiper.js | Autoplay</a>.'),
       '#open' => TRUE,
     ];
 
@@ -438,7 +443,7 @@ class SwiperFormatterForm extends EntityForm {
       '#type' => 'details',
       '#title' => $this->t('Lazy loading settings'),
       '#open' => TRUE,
-      '#description' => $this->t('Swiper Lazy Loading module, see <a target"_blank" href="https://swiperjs.com/swiper-api#lazy-loading">Swiper.js | Lazy Loading</a>.'),
+      '#description' => $this->t('Swiper Lazy Loading module, see <a target="_blank" href="https://swiperjs.com/swiper-api#lazy-loading">Swiper.js | Lazy Loading</a>.'),
     ];
 
     $form['swiper_options']['lazy']['enabled'] = [
@@ -568,6 +573,22 @@ class SwiperFormatterForm extends EntityForm {
 
     // Go back to a page with collection of Swiper entities.
     $form_state->setRedirect('entity.swiper_formatter.collection');
+  }
+
+  /**
+   * Process "effect" radios.
+   *
+   * @param array $element
+   *   Form "effect" radios element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
+   *
+   * @return array
+   *   Form "effect" radios element.
+   */
+  public static function processEffect(array &$element, FormStateInterface $form_state) {
+    $element['creative']['#disabled'] = TRUE;
+    return $element;
   }
 
   /**
