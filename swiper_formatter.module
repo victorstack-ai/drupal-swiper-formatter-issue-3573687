@@ -33,6 +33,8 @@ and there can be unlimited number of these, each ready as a sort of pre-defined 
       $output .= '<dd>' . t('On "Manage display" for any entity bundle assign this field formatter to any image field and configure setting to follow up.') . '</dd>';
       $output .= '<dt>' . t('<strong>Swiper markup</strong> formatter') . '</dt>';
       $output .= '<dd>' . t('On "Manage display" for any entity bundle assign this field formatter to any text type of field and configure setting to follow up.') . '</dd>';
+      $output .= '<dt>' . t('<strong>Swiper entity</strong> formatter') . '</dt>';
+      $output .= '<dd>' . t('On "Manage display" for any entity bundle assign this field formatter to any entity reference > media or entity reference > content reference type and configure setting to follow up.') . '</dd>';
       $output .= '<dt>' . t('<strong>Views style</strong> plugin') . '</dt>';
       $output .= '<dd>' . t('Most common usage, just any regular View display having "Swiper formatter" set for "Format" whereas both fields and content with a view mode ("Show: Fields" and "Show: Content") will work. Everything that is one view result or #row will become one slide.') . '</dd>';
       $output .= '<dt>' . t('<strong>Views style</strong> plugin - advanced') . '</dt>';
