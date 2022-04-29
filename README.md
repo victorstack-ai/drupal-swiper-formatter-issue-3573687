@@ -26,13 +26,16 @@ of options for designing your own widget.
 - **Views'style plugin** "Swiper formatter" which will turn any View
   into a swiping game (see more below about advanced usage).
 
-- **Swiper markup field formatter plugin** for text field types - renders slides
+- **Swiper markup** field formatter plugin for text field types - renders slides
   from any kind of text/markup, coming from text fields,
   including rich text fields.
 
-- **Swiper images field formatter plugin** for image type of fields.
+- **Swiper images** field formatter plugin for image type of fields.
   It extends on a current image formatter and respects all of parent settings,
   such as Image style and Image link.
+
+- **Swiper entity** field formatter plugin, currently basic tested
+  on Media entity reference field as well as Content entity reference field.
 
 - **Each Swiper.js instance is fully unique** so we can have as many,
   and as different or the same, in parallel on the same page.
@@ -116,7 +119,7 @@ three different ways for using with Views:
 ####TODO
 
 - Provide support for Paragraphs
-- Provide support for Media
+- Develop CKEditor 5 plugin
 
 
 ####Authors/Credits
