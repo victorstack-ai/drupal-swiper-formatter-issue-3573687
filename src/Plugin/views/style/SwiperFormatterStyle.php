@@ -81,7 +81,7 @@ class SwiperFormatterStyle extends StylePluginBase {
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-    $options['template'] = ['default' =>'default'];
+    $options['template'] = ['default' => 'default'];
     $options['caption'] = ['default' => NULL];
 
     // Ensure unique id attribute for each instance

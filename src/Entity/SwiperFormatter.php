@@ -44,6 +44,7 @@ use Drupal\swiper_formatter\SwiperFormatterInterface;
  *     "id",
  *     "label",
  *     "description",
+ *     "status",
  *     "swiper_options"
  *   }
  * )
