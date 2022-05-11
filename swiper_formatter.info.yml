@@ -1,5 +1,5 @@
 name: Swiper formatter
 type: module
-description: 'Integration of Swiper.js as a configuration entity, with a field formatter and views style.'
+description: 'Integration of Swiper as a configuration entity, with a couple of field formatters and views style.'
 package: 'Other'
 core_version_requirement: ^8.8 || ^9
