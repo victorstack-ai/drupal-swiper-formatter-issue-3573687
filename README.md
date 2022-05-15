@@ -1,13 +1,18 @@
 ## Swiper formatter
 
-###General Information
+### General Information
 
 Provides Drupal integration with the one of the most modern swiping/sliding libraries [Swiper.js](https://swiperjs.com/).
 Swiper.js is mobile first, layout and gestures wise, it provides a huge amount
 of options for designing your own widget.
 
+This module is not meant to be yet another images slider, or such.
+It is rather a swiping UI widget for almost any kind of content,
+and in both directions horizontal and vertical - markup/text fields,
+media fields (i.e. video), content entity references fields,
+Views content in the classic way, some type of fields within Views etc.
 
-###Features
+### Features
 
 - **Integration of the latest version of Swiper.js**, currently that is 8.x.x.
 
@@ -50,11 +55,11 @@ of options for designing your own widget.
 - **PHP 8.x** version compatibility.
 
 
-###Swiper.js documentation
+### Swiper.js documentation
 Please check out [Swiper.js extensive API](https://swiperjs.com/swiper-api) for more in depth documentation.
 
 
-###Installation
+### Installation
 
 1. Fetch module via Composer
   `composer require drupal/swiper_formatter`
@@ -62,7 +67,7 @@ Please check out [Swiper.js extensive API](https://swiperjs.com/swiper-api) for 
   `drush en swiper_formatter`
 
 
-###Use
+### Use
 
 1. Make sure "Administer Swiper formatter" permission is set for operating user.
 
@@ -85,7 +90,7 @@ Please check out [Swiper.js extensive API](https://swiperjs.com/swiper-api) for 
       and assign the rest of the settings found there.  
 
 
-###Advanced usage in Views
+### Advanced usage in Views
 
 This module provides possibility for at least
 three different ways for using with Views:
@@ -116,12 +121,12 @@ three different ways for using with Views:
    "Multiple field settings" for that field.
 
 
-####TODO
+#### TODO
 
 - Provide support for Paragraphs
 - Develop CKEditor 5 plugin
 
 
-####Authors/Credits
+#### Authors/Credits
 
 * [nk_](https://www.drupal.org/u/nk_)
