@@ -22,8 +22,12 @@
       <h3>{{ settings.swiper_title }}</h3>
     {% endif %}
 
-   
-    <div{{ attributes }}>
+    {% 
+      set wrapper_classes = [
+        settings.slidesPerView > 1 ? 'slides-multiple' : 'slide-single',
+      ]
+    %}
+    <div{{ attributes.addClass(wrapper_classes) }}>
 
       {# Slides #}
       <div{{ content_attributes }}>

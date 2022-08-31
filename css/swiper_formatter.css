@@ -5,7 +5,7 @@
   position: relative;
 }
 
-.swiper-container .swiper-slide {
+.swiper-container:not(.slides-multiple) .swiper-slide {
   width: inherit !important;
 }
 
