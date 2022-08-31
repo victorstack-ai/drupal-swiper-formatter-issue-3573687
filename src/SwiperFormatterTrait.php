@@ -196,8 +196,9 @@ trait SwiperFormatterTrait {
 
     // Build the options summary.
     if ($swiper_template = $this->getSetting('template')) {
-      $swiper_entity = $this->swiperFormatter->load($swiper_template);
-      $summary[] = $this->t('Swiper template: @swiper_template', ['@swiper_template' => $swiper_entity->label()]);
+      if ($swiper_entity = $this->swiperFormatter->load($swiper_template)) {
+        $summary[] = $this->t('Swiper template: @swiper_template', ['@swiper_template' => $swiper_entity->label()]);
+      }
     }
 
     if ($caption = $this->getSetting('caption')) {
