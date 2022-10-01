@@ -223,7 +223,7 @@ function template_preprocess_swiper_formatter(&$variables) {
   if ($formatter_settings['navigation']['enabled']) {
 
     // We need to do these two separately, in order to
-    // preserve classesfor default Swiper styling/CSS.
+    // preserve classes for default Swiper styling/CSS.
     $formatter_settings['navigation']['prevEl'] = '.' . $variables['id'] . '-prev';
     $formatter_settings['navigation']['nextEl'] = '.' . $variables['id'] . '-next';
 
