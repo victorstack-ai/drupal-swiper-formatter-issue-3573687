@@ -129,7 +129,7 @@ class SwiperFormatterStyle extends StylePluginBase {
 
       foreach ($fields as $field_name => $field) {
         /** @var \Drupal\views\Plugin\views\field\EntityField $field */
-        $field_storage_definitions = $this->entityFieldManager->getFieldStorageDefinitions($field->definition['entity_type']);
+        $field_storage_definitions = isset($field->definition['entity_type']) && !empty($field->definition['entity_type']) ? $this->entityFieldManager->getFieldStorageDefinitions($field->definition['entity_type']) : [];
         if (isset($field->definition['field_name']) && isset($field_storage_definitions[$field->definition['field_name']])) {
 
           if ($field->options['type'] == 'image' && (count($fields) == 1 || count($fields) == 2)) {
