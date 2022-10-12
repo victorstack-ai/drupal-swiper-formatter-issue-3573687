@@ -9,7 +9,13 @@
 
   Drupal.swiper_formatter = Drupal.swiper_formatter || {};
 
-  Drupal.behaviors.nkToolsSwiper = {
+   /**
+    * Drupal.behaviors implementation.
+    *
+    * Register and initialise all Swiper instances on the page.
+    *
+    */
+   Drupal.behaviors.nkToolsSwiper = {
 
     attach: function(context, settings) {
 
@@ -36,6 +42,7 @@
               if (swipers[swiperContainer.id]) {
 
                 // Swiper's slideChangeTransitionEnd event.
+                // @todo: Make this optional via configuration.
                 swipers[swiperContainer.id].on('slideChangeTransitionEnd', function(e) {
                   self.showHidden(this);
                 });
@@ -49,6 +56,12 @@
       }
     },
 
+    /**
+     * Show's any ".hidden" elements on a new slide.
+     *
+     * @param object swiper
+     *  Current Swiper object.
+     */
     showHidden: function(swiper) {
       if (swiper && swiper.slides.length > 0) {
         $.each(swiper.slides, function(index, slide) {
@@ -61,17 +74,32 @@
       }
     },
 
-    registerTriggers: function(swiper, triggers, context, settings) {
-      triggers.once('swiperSwipe').each(function() {  
+    /**
+     * Run sliding from anywhere, with some markup attributes defined.
+     *
+     * @param object swiper
+     *  Current Swiper object.
+     * @param array triggers
+     *  Array with trigger elements/objects.
+     * @code
+     *  <ul>
+     *    <li><a class="swiper-trigger" data-index="2" href="#">Go to slide 2</a></li>
+     *    <li><a class="swiper-trigger is-active" data-index="4" href="#">Go to slide 4</a></li>
+     *  </ul>
+     * @endcode
+     */
+    registerTriggers: function(swiper, triggers) {
+      triggers.each(function(trigger) {
         $(this).on('click', function(e) {
 
-          $(context).find('.swiper-trigger').each(function(i, sibling) {
-            $(sibling).removeClass('active');
-          });
+          // Take care of siblings' active class.
+          if ($(this).parent().siblings().length) {
+            $(this).parent().siblings().each(function(i, sibling) {
+              $(sibling).find('.swiper-trigger').removeClass('active');
+            });
+          }
 
-          setTimeout(function() {
-            $(e.currentTarget).addClass('active');
-          }, 1);
+          $(e.currentTarget).addClass('active');
 
           var index = $(this).attr('data-index') ? parseInt($(this).attr('data-index')) - 1 : 0;
           swiper.slideTo(index);
