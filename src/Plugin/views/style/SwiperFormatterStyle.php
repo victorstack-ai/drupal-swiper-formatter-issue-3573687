@@ -128,6 +128,7 @@ class SwiperFormatterStyle extends StylePluginBase {
       $entity_fields = [];
 
       foreach ($fields as $field_name => $field) {
+        // Double check on field storage definition existence.
         /** @var \Drupal\views\Plugin\views\field\EntityField $field */
         $field_storage_definitions = isset($field->definition['entity_type']) && !empty($field->definition['entity_type']) ? $this->entityFieldManager->getFieldStorageDefinitions($field->definition['entity_type']) : [];
         if (isset($field->definition['field_name']) && isset($field_storage_definitions[$field->definition['field_name']])) {
