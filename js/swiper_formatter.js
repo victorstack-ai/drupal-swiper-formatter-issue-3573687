@@ -42,10 +42,10 @@
               if (swipers[swiperContainer.id]) {
 
                 // Swiper's slideChangeTransitionEnd event.
-                // @todo: Make this optional via configuration.
-                swipers[swiperContainer.id].on('slideChangeTransitionEnd', function(e) {
-                  self.showHidden(this);
-                });
+                // @todo: Make this as option in entity configuration form.
+                // swipers[swiperContainer.id].on('slideChangeTransitionEnd', function(e) {
+                //   self.showHidden(this);
+                // });
 
                 // A custom links (anywhere on the page) that trigger swiper slides.
                 self.registerTriggers(swipers[swiperContainer.id], $(context).find('.swiper-trigger'), context, settings); 
