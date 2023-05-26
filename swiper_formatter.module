@@ -208,6 +208,10 @@ function template_preprocess_swiper_formatter(&$variables) {
 
   $formatter_settings = &$variables['settings'];
 
+  if (isset($formatter_settings['template'])) {
+    $variables['attributes']['class'][] = Html::getClass($formatter_settings['template']);
+  }
+
   $content_attributes = [
     'class' => [
       'swiper-wrapper',
