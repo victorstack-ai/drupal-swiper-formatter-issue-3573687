@@ -294,6 +294,13 @@ function template_preprocess_swiper_formatter(&$variables) {
       'swiper-slide-' . Html::cleanCssIdentifier($formatter_settings['field_type']),
     ];
 
+    // Add extra cache key to avoid conflict with original view mode cached
+    // version as a workaround to current implementation until the main logic is
+    // reworked. Just in case it's not an entity, we add a check.
+    $keys = $item['#cache']['keys'] ?? [];
+    if (in_array('entity_view', $keys)) {
+      $item['#cache']['keys'][] = 'swiper-slide';
+    }
   }
 
   // Add our js settings and libraries.
