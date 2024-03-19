@@ -1,117 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\swiper_formatter;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
-use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Routing\RedirectDestinationInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Url;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Common methods for a few possible Swiper formatters.
  */
 trait SwiperFormatterTrait {
 
-  /**
-   * Drupal\Core\Entity\EntityTypeManager definition.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * Drupal\Core\Entity\EntityFieldManagerInterface definition.
-   *
-   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
-   */
-  protected $entityFieldManager;
-
-  /**
-   * Drupal\Core\Routing\RedirectDestination definition.
-   *
-   * @var \Drupal\Core\Routing\RedirectDestinationInterface
-   */
-  protected $destination;
-
-  /**
-   * Swiper Configuration Entity definittion.
-   *
-   * @var \Drupal\swiper_formatter\Entity\SwiperFormatter
-   */
-  protected $swiperFormatter;
-
-  /**
-   * Drupal\Core\Messenger\MessengerInterface definition.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
+  use MessengerTrait;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(
-    $plugin_id,
-    $plugin_definition,
-    FieldDefinitionInterface $field_definition,
-    array $settings,
-    $label,
-  $view_mode,
-    array $third_party_settings,
-    AccountInterface $current_user,
-    EntityStorageInterface $image_style_storage,
-    FileUrlGeneratorInterface $file_url_generator = NULL,
-    EntityTypeManagerInterface $entity_type_manager,
-    EntityFieldManagerInterface $entity_field_manager,
-    RedirectDestinationInterface $destination,
-    MessengerInterface $messenger) {
-
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $current_user, $image_style_storage, $file_url_generator);
-
-    // $this->renderer = $renderer;
-    $this->entityTypeManager = $entity_type_manager;
-    $this->entityFieldManager = $entity_field_manager;
-    $this->destination = $destination;
-    $this->swiperFormatter = $this->entityTypeManager->getStorage('swiper_formatter');
-    $this->messenger = $messenger;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $plugin_id,
-      $plugin_definition,
-      $configuration['field_definition'],
-      $configuration['settings'],
-      $configuration['label'],
-      $configuration['view_mode'],
-      $configuration['third_party_settings'],
-      $container->get('current_user'),
-      $container->get('entity_type.manager')->getStorage('image_style'),
-      $container->get('file_url_generator'),
-      $container->get('entity_type.manager'),
-      $container->get('entity_field.manager'),
-      $container->get('redirect.destination'),
-      $container->get('messenger')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function defaultSettings() {
+  public static function defaultSettings(): array {
     return [
       'template' => 'default',
       'caption' => NULL,
@@ -122,14 +33,13 @@ trait SwiperFormatterTrait {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
 
     $element = parent::settingsForm($form, $form_state);
 
     $entity_type = $this->fieldDefinition->getTargetEntityTypeId();
     $fields = $this->entityFieldManager->getFieldDefinitions($entity_type, $this->fieldDefinition->getTargetBundle());
     $entity_fields = [];
-    $swiper_entity = NULL;
 
     foreach ($fields as $field_name => $field) {
       $entity_fields[$field_name] = [
@@ -141,7 +51,9 @@ trait SwiperFormatterTrait {
     $settings = $this->fieldDefinition->getSettings();
 
     if (!empty($this->getSetting('template'))) {
-      if ($swiper_entity = $this->swiperFormatter->load($this->getSetting('template'))) {
+      $swiper_formatter = $this->entityTypeManager->getStorage('swiper_formatter');
+
+      if ($swiper_entity = $swiper_formatter->load($this->getSetting('template'))) {
         $settings += $swiper_entity->get('swiper_options');
       }
     }
@@ -171,14 +83,18 @@ trait SwiperFormatterTrait {
       ];
 
       $route_params[$entity_type . '_type'] = $this->fieldDefinition->getTargetBundle();
-
-      $destination = substr($this->destination->get(), 0, strpos($this->destination->get(), '?'));
       $uri_options = [
         'fragment' => 'edit-settings-title-field',
-        'query' => ['destination' => $destination],
       ];
+      $has_destination = strpos($this->destination->get(), '?');
+      if ($has_destination !== FALSE) {
+        $destination = substr($this->destination->get(), 0, $has_destination);
+        $uri_options['query'] = [
+          'destination' => $destination,
+        ];
+        $element['#default_value']['destination'] = ['destination' => $destination];
+      }
       $element['#default_value']['caption']['field_edit_url'] = Url::fromRoute($route_name, $route_params, $uri_options);
-      $element['#default_value']['destination'] = ['destination' => $destination];
     }
 
     return $element;
@@ -187,14 +103,15 @@ trait SwiperFormatterTrait {
   /**
    * {@inheritdoc}
    */
-  public function settingsSummary() {
+  public function settingsSummary(): array {
 
     $parent = parent::settingsSummary();
     $summary = [];
 
     // Build the options summary.
     if ($swiper_template = $this->getSetting('template')) {
-      if ($swiper_entity = $this->swiperFormatter->load($swiper_template)) {
+      $swiper_formatter = $this->entityTypeManager->getStorage('swiper_formatter');
+      if ($swiper_entity = $swiper_formatter->load($swiper_template)) {
         $summary[] = $this->t('Swiper template: @swiper_template', ['@swiper_template' => $swiper_entity->label()]);
       }
     }
@@ -229,7 +146,7 @@ trait SwiperFormatterTrait {
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, mixed $langcode): array {
 
     $elements = [];
 
@@ -247,16 +164,15 @@ trait SwiperFormatterTrait {
         '@field' => $this->fieldDefinition->getLabel(),
         '@edit' => 'gg',
       ]);
-      $this->messenger->addWarning($message);
+      $this->messenger()->addWarning($message);
       return $output;
     }
 
-    $id = NULL;
     $formatter_settings = $this->getSettings();
     $formatter_settings['field_type'] = $type;
     $formatter_settings['field_name'] = $this->fieldDefinition->getFieldStorageDefinition()->getName();
-
-    if ($swiper_entity = $this->swiperFormatter->load($this->getSetting('template'))) {
+    $swiper_formatter = $this->entityTypeManager->getStorage('swiper_formatter');
+    if ($swiper_entity = $swiper_formatter->load($this->getSetting('template'))) {
 
       $formatter_settings += $swiper_entity->get('swiper_options');
 
@@ -330,7 +246,7 @@ trait SwiperFormatterTrait {
   /**
    * {@inheritdoc}
    */
-  public static function isApplicable(FieldDefinitionInterface $field_definition) {
+  public static function isApplicable(FieldDefinitionInterface $field_definition): bool {
     // This formatter only applies to multi-image fields.
     return parent::isApplicable($field_definition) && $field_definition->getFieldStorageDefinition()->isMultiple();
   }
@@ -338,12 +254,13 @@ trait SwiperFormatterTrait {
   /**
    * {@inheritdoc}
    */
-  public function calculateDependencies() {
+  public function calculateDependencies(): array {
     $dependencies = [];
     $option_id = $this->getSetting('template');
     // Add the options as dependency.
     if ($option_id) {
-      $options = $this->swiperFormatter->load($option_id);
+      $swiper_formatter = $this->entityTypeManager->getStorage('swiper_formatter');
+      $options = $swiper_formatter->load($option_id);
       $dependencies[$options->getConfigDependencyKey()][] = $options->getConfigDependencyName();
     }
     return parent::calculateDependencies() + $dependencies;
@@ -352,7 +269,7 @@ trait SwiperFormatterTrait {
   /**
    * {@inheritdoc}
    */
-  public function onDependencyRemoval(array $dependencies) {
+  public function onDependencyRemoval(array $dependencies): bool {
     $changed = parent::onDependencyRemoval($dependencies);
 
     if ($this->optionsDependenciesDeleted($this, $dependencies)) {
@@ -370,15 +287,19 @@ trait SwiperFormatterTrait {
    *   An array of dependencies that will be deleted.
    *
    * @return bool
-   *   Whether or not option set dependencies changed.
+   *   If option set dependencies changed.
    */
-  protected function optionsDependenciesDeleted(FormatterBase $formatter, array $dependencies_deleted) {
+  protected function optionsDependenciesDeleted(FormatterBase $formatter, array $dependencies_deleted): bool {
     $option_id = $formatter->getSetting('template');
-    if ($option_id && $options = $options = $this->swiperFormatter->load($option_id)) {
-      if (!empty($dependencies_deleted[$options->getConfigDependencyKey()]) && in_array($options->getConfigDependencyName(), $dependencies_deleted[$options->getConfigDependencyKey()])) {
-        $formatter->setSetting('template', NULL);
-        return TRUE;
+    if ($option_id) {
+      $swiper_formatter = $this->entityTypeManager->getStorage('swiper_formatter');
+      if ($options = $swiper_formatter->load($option_id)) {
+        if (!empty($dependencies_deleted[$options->getConfigDependencyKey()]) && in_array($options->getConfigDependencyName(), $dependencies_deleted[$options->getConfigDependencyKey()])) {
+          $formatter->setSetting('template', NULL);
+          return TRUE;
+        }
       }
+      return FALSE;
     }
     return FALSE;
   }

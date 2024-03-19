@@ -2,6 +2,13 @@
 
 /**
  * @file
+ * Requirements check, mostly for local Swiper files existence.
+ */
+
+declare(strict_types=1);
+
+/**
+ * @file
  * Install, update, and uninstall functions for the Swiper formatter module.
  */
 
@@ -10,7 +17,7 @@ use Drupal\swiper_formatter\Entity\SwiperFormatter;
 /**
  * Implements hook_requirements().
  */
-function swiper_formatter_requirements($phase) {
+function swiper_formatter_requirements(string $phase): array {
   if ($phase != 'runtime') {
     return [];
   }

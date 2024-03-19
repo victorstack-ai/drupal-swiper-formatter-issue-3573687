@@ -6,10 +6,10 @@ remote:
     url: https://github.com/nolimits4web/swiper/blob/master/LICENSE
     gpl-compatible: true
   js:
-    //unpkg.com/swiper@8/swiper-bundle.min.js: { type: external, minified: true }
+    //unpkg.com/swiper@10/swiper-bundle.min.js: { type: external, minified: true }
   css:
     component: 
-      //unpkg.com/swiper@8/swiper-bundle.min.css: { type: external, minified: true }  
+      //unpkg.com/swiper@10/swiper-bundle.min.css: { type: external, minified: true }
 
 local:
   version: VERSION
@@ -36,6 +36,4 @@ swiper_formatter:
       css/swiper_formatter.css: {}
   dependencies:
     - core/drupal
-    - core/jquery
     - core/once
-    - core/drupalSettings

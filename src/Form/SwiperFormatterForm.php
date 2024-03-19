@@ -1,21 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\swiper_formatter\Form;
 
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A Swiper entity form.
  *
- * @property \Drupal\swiper_formatter\SwiperFormatterInterface $entity
- *
- * @phpstan-consistent-constructor
+ * @property \Drupal\swiper_formatter\Entity\SwiperFormatter $entity
  */
 class SwiperFormatterForm extends EntityForm {
 
+  /**
+   * Default Swiper's modules.
+   *
+   * @var array
+   */
   const SWIPER_MODULES = [
     'navigation',
     'pagination',
@@ -24,35 +27,9 @@ class SwiperFormatterForm extends EntityForm {
   ];
 
   /**
-   * EntityManager class.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * Constructs an Swiper configuration entity.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   Entity type manager.
-   */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
-    $this->entityTypeManager = $entity_type_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity_type.manager')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function form(array $form, FormStateInterface $form_state) {
+  public function form(array $form, FormStateInterface $form_state): array {
 
     $form = parent::form($form, $form_state);
 
@@ -295,13 +272,11 @@ class SwiperFormatterForm extends EntityForm {
     ];
 
     $form['swiper_options']['autoplay']['delay'] = [
-    // $form['swiper_options']['autoplay'] = [
       '#type' => 'number',
       '#title' => $this->t('Delay in ms'),
-    // $this->entity->get('delay'),
       '#default_value' => $default_values['autoplay']['delay'],
       '#description' => $this->t('Set amount of milliseconds after which Swiper will automatically swipe to the next slide.'),
-    // @see https://www.drupal.org/docs/8/api/form-api/conditional-form-fields
+      // @see https://www.drupal.org/docs/8/api/form-api/conditional-form-fields
       '#states' => [
         'visible' => [
           ':input[name="swiper_options[autoplay][enabled]"]' => ['checked' => TRUE],
@@ -312,10 +287,8 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['autoplay']['disableOnInteraction'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Disable on interaction'),
-    // $this->entity->get('delay'),
       '#default_value' => $default_values['autoplay']['disableOnInteraction'],
       '#description' => $this->t('Enable/disable autoplay on user interaction.'),
-    // @see https://www.drupal.org/docs/8/api/form-api/conditional-form-fields
       '#states' => [
         'visible' => [
           ':input[name="swiper_options[autoplay][enabled]"]' => ['checked' => TRUE],
@@ -326,10 +299,8 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['autoplay']['pauseOnMouseEnter'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Pause on mouse enter'),
-    // $this->entity->get('delay'),
       '#default_value' => $default_values['autoplay']['pauseOnMouseEnter'],
       '#description' => $this->t('Pause autoplay on mouse enter.'),
-    // @see https://www.drupal.org/docs/8/api/form-api/conditional-form-fields
       '#states' => [
         'visible' => [
           ':input[name="swiper_options[autoplay][enabled]"]' => ['checked' => TRUE],
@@ -340,10 +311,8 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['autoplay']['reverseDirection'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Reverse direction'),
-    // $this->entity->get('delay'),
       '#default_value' => $default_values['autoplay']['reverseDirection'],
       '#description' => $this->t('Enables autoplay in reverse direction.'),
-    // @see https://www.drupal.org/docs/8/api/form-api/conditional-form-fields
       '#states' => [
         'visible' => [
           ':input[name="swiper_options[autoplay][enabled]"]' => ['checked' => TRUE],
@@ -354,10 +323,8 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['autoplay']['stopOnLastSlide'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Stop on last slide'),
-    // $this->entity->get('delay'),
       '#default_value' => $default_values['autoplay']['stopOnLastSlide'],
       '#description' => $this->t('Stop autoplay when last slide is reached.'),
-    // @see https://www.drupal.org/docs/8/api/form-api/conditional-form-fields
       '#states' => [
         'visible' => [
           ':input[name="swiper_options[autoplay][enabled]"]' => ['checked' => TRUE],
@@ -368,10 +335,8 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['autoplay']['waitForTransition'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Wait for transition'),
-    // $this->entity->get('delay'),
       '#default_value' => $default_values['autoplay']['waitForTransition'],
       '#description' => $this->t('Waits for transition to continue autoplay.'),
-    // @see https://www.drupal.org/docs/8/api/form-api/conditional-form-fields
       '#states' => [
         'visible' => [
           ':input[name="swiper_options[autoplay][enabled]"]' => ['checked' => TRUE],
@@ -389,7 +354,6 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['pagination']['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable pagination'),
-    // $this->entity->get('pagination_enabled'),
       '#default_value' => $default_values['pagination']['enabled'],
       '#description' => $this->t('Enable this for more options.'),
     ];
@@ -405,7 +369,6 @@ class SwiperFormatterForm extends EntityForm {
       ],
       '#default_value' => $default_values['pagination']['type'],
       '#description' => $this->t('Setting to "Custom" obviously requires implementation of <em>renderCustom()</em> callback somewhere in your code. See more about it <a target="_blank" href="https://swiperjs.com/swiper-api#pagination">here</a>.'),
-      // @see https://www.drupal.org/docs/8/api/form-api/conditional-form-fields
       '#states' => [
         'visible' => [
           ':input[name="swiper_options[pagination][enabled]"]' => ['checked' => TRUE],
@@ -519,7 +482,7 @@ class SwiperFormatterForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): int {
 
     $swiper_options = [];
     foreach ($form_state->getValues() as $key => $values) {
@@ -559,7 +522,8 @@ class SwiperFormatterForm extends EntityForm {
     }
 
     // Now save entity.
-    if ($this->entity->save()) {
+    $saved = $this->entity->save();
+    if ($saved) {
       $this->messenger()->addStatus($this->t('Swiper %label saved.', [
         '%label' => $this->entity->label(),
       ]));
@@ -572,6 +536,7 @@ class SwiperFormatterForm extends EntityForm {
 
     // Go back to a page with collection of Swiper entities.
     $form_state->setRedirect('entity.swiper_formatter.collection');
+    return $saved;
   }
 
   /**
@@ -585,7 +550,7 @@ class SwiperFormatterForm extends EntityForm {
    * @return array
    *   Form "effect" radios element.
    */
-  public static function processEffect(array &$element, FormStateInterface $form_state) {
+  public static function processEffect(array &$element, FormStateInterface $form_state): array {
     $element['creative']['#disabled'] = TRUE;
     return $element;
   }
@@ -595,8 +560,11 @@ class SwiperFormatterForm extends EntityForm {
    *
    * @param string $id
    *   Swiper config entity ID property.
+   *
+   * @return bool
+   *   True if swiper entity exists.
    */
-  public function exist($id) {
+  public function exist(string $id): bool {
     return (bool) $this->entityTypeManager->getStorage('swiper_formatter')->load($id);
   }
 
@@ -610,7 +578,7 @@ class SwiperFormatterForm extends EntityForm {
    * @param mixed $value
    *   Form element's value.
    */
-  protected function elementsHandler(array $element, &$value) {
+  protected function elementsHandler(array $element, mixed &$value): void {
     if ($element['#type'] == 'checkbox') {
       if ($value == 0) {
         $value = FALSE;

@@ -2,9 +2,12 @@
 
 /**
  * @file
- * swiper_formatter.module
+ * Swiper formatter module, contains help hook and theme hooks.
  */
 
+declare(strict_types=1);
+
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Render\Markup;
@@ -16,7 +19,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_help().
  */
-function swiper_formatter_help($route_name, RouteMatchInterface $route_match) {
+function swiper_formatter_help($route_name, RouteMatchInterface $route_match): string|MarkupInterface|NULL {
   switch ($route_name) {
 
     case 'help.page.swiper_formatter':
@@ -52,12 +55,13 @@ and there can be unlimited number of these, each ready as a sort of pre-defined 
     case 'entity.swiper_formatter.delete_form':
       return t('Make sure to double check on Field formatter settings (Manage display) as well as any Views that are using this particular Swiper style.');
   }
+  return NULL;
 }
 
 /**
  * Implements hook_theme().
  */
-function swiper_formatter_theme() {
+function swiper_formatter_theme(): array {
 
   return [
     'swiper_formatter' => [
@@ -95,7 +99,7 @@ function swiper_formatter_theme() {
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function swiper_formatter_theme_suggestions_swiper_formatter(array $variables) {
+function swiper_formatter_theme_suggestions_swiper_formatter(array $variables): array {
 
   $suggestions = [];
 
@@ -144,7 +148,7 @@ function swiper_formatter_theme_suggestions_swiper_formatter(array $variables) {
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function swiper_formatter_theme_suggestions_swiper_formatter_slide(array $variables) {
+function swiper_formatter_theme_suggestions_swiper_formatter_slide(array $variables): array {
 
   $suggestions = [];
   // Twig templates based on Swiper view data.
@@ -202,7 +206,7 @@ function swiper_formatter_theme_suggestions_swiper_formatter_slide(array $variab
 /**
  * Implements template_preprocess_hook().
  */
-function template_preprocess_swiper_formatter(&$variables) {
+function template_preprocess_swiper_formatter(array &$variables): void {
 
   $formatter_settings = &$variables['settings'];
 
@@ -301,6 +305,7 @@ function template_preprocess_swiper_formatter(&$variables) {
     if (in_array('entity_view', $keys)) {
       $item['#cache']['keys'][] = 'swiper-slide';
     }
+
   }
 
   // Add our js settings and libraries.

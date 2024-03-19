@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\swiper_formatter;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Provides a listing of swipers.
+ * Provides a listing of Swiper entities/templates.
  */
 class SwiperFormatterListBuilder extends ConfigEntityListBuilder {
 
   /**
    * {@inheritdoc}
    */
-  public function buildHeader() {
+  public function buildHeader(): array {
     $header['label'] = $this->t('Label');
     $header['id'] = $this->t('Machine name');
     $header['status'] = $this->t('Status');
@@ -23,7 +25,7 @@ class SwiperFormatterListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(EntityInterface $entity) {
+  public function buildRow(EntityInterface $entity): array {
     $row['label'] = $entity->label();
     $row['id'] = $entity->id();
     $row['status'] = $entity->status() ? $this->t('Enabled') : $this->t('Disabled');
@@ -33,7 +35,7 @@ class SwiperFormatterListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity) {
+  public function getDefaultOperations(EntityInterface $entity): array {
     $ops = parent::getDefaultOperations($entity);
     // Do not allow deletion of the default configuration.
     if ($entity->id() == 'default') {

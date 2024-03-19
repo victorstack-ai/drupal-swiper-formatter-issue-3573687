@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\swiper_formatter\Element;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -24,9 +26,14 @@ use Drupal\swiper_formatter\Entity\SwiperFormatter;
  */
 class SwiperFormatterSettings extends FormElement {
 
-  // Field types that can be a source for slide csption.
-  // It does combine and include for field formatter settings form
-  // as well as in Views' settings form (naming).
+  /**
+   * Field types that can be a source for slide caption.
+   *
+   * It does combine and include for field formatter settings form,
+   * as well as in Views' settings form (naming).
+   *
+   * @var array
+   */
   const CAPTION_TYPES = [
     'basic_string',
     'string',
@@ -40,7 +47,7 @@ class SwiperFormatterSettings extends FormElement {
   /**
    * {@inheritdoc}
    */
-  public function getInfo() {
+  public function getInfo(): array {
     return [
       '#input' => TRUE,
       '#process' => [
@@ -63,10 +70,9 @@ class SwiperFormatterSettings extends FormElement {
    * @return array
    *   This element, processed and with basic elements included.
    */
-  public static function process(array &$element, FormStateInterface $form_state, array &$complete_form) {
+  public static function process(array &$element, FormStateInterface $form_state, array &$complete_form): array {
 
     $default_values = isset($element['#default_value']) && !empty($element['#default_value']) ? $element['#default_value'] : [];
-    // $has_template,
     $template = $default_values['template'] ?? NULL;
     $options = SwiperFormatter::getSwiperTemplates();
 
@@ -98,7 +104,7 @@ class SwiperFormatterSettings extends FormElement {
     ];
 
     $params = [];
-    if ($default_values && isset($default_values['destination']) && !empty($default_values['destination'])) {
+    if ($default_values && !empty($default_values['destination'])) {
       $params['query'] = $default_values['destination'];
     }
 
@@ -135,16 +141,16 @@ class SwiperFormatterSettings extends FormElement {
    * @return array
    *   This element, processed and with caption element included.
    */
-  public static function processCaption(array &$element, FormStateInterface $form_state, array &$complete_form) {
+  public static function processCaption(array &$element, FormStateInterface $form_state, array &$complete_form): array {
 
-    $default_values = isset($element['#default_value']) && !empty($element['#default_value']) ? $element['#default_value'] : NULL;
+    $default_values = !empty($element['#default_value']) ? $element['#default_value'] : NULL;
 
     // Add the caption setting.
     if ($default_values) {
 
       // Field's name and type.
-      $type = isset($default_values['type']) && !empty($default_values['type']) ? $default_values['type'] : NULL;
-      $name = isset($default_values['name']) && !empty($default_values['name']) ? $default_values['name'] : NULL;
+      $type = !empty($default_values['type']) ? $default_values['type'] : NULL;
+      $name = !empty($default_values['name']) ? $default_values['name'] : NULL;
 
       if (!$type || !$name) {
         return $element;
@@ -196,13 +202,13 @@ class SwiperFormatterSettings extends FormElement {
           // Just use plain text if we can't build the field edit link.
           $action = ['#markup' => $action_text];
         }
-        // $action = ['#markup' => $action_text];
+
         $element['caption']['#description'] = t('You need to @action for this field to be able to use it as a caption.', [
           '@action' => \Drupal::service('renderer')->render($action),
         ]);
 
         // If there are no suitable caption sources,
-        // than disable the caption element.
+        // then disable the caption element.
         if (count($action_fields) >= 2) {
           $element['caption']['#disabled'] = TRUE;
         }
@@ -239,7 +245,7 @@ class SwiperFormatterSettings extends FormElement {
    * Define #options for caption form element.
    *
    * @param array $entity_fields
-   *   Asociative array of fields, storage and definition.
+   *   Associative array of fields, storage and definition.
    * @param string $name
    *   Machine name of the captions field source.
    * @param array $caption_options
@@ -247,7 +253,7 @@ class SwiperFormatterSettings extends FormElement {
    * @param array $action_fields
    *   An array of "actions", providing some extr alinks to user.
    */
-  protected static function defaultCaption(array $entity_fields, string $name, array &$caption_options, array &$action_fields = []) {
+  protected static function defaultCaption(array $entity_fields, string $name, array &$caption_options, array &$action_fields = []): void {
     foreach ($entity_fields as $field) {
       if (in_array($field['storage']->getType(), static::CAPTION_TYPES) && $field['storage']->getName() != $name) {
         /** @var \Drupal\field\Entity\FieldStorageConfig $field['storage'] */
@@ -268,10 +274,10 @@ class SwiperFormatterSettings extends FormElement {
    * @param array $action_fields
    *   An array of "actions", providing some extr alinks to user.
    */
-  protected static function imageCaption(array $default_values, array &$caption_options, array &$action_fields) {
+  protected static function imageCaption(array $default_values, array &$caption_options, array &$action_fields): void {
 
-    if (isset($default_values['settings']) && isset($default_values['settings']['title_field'])) {
-      if ($default_values['settings']['title_field'] == FALSE) {
+    if (isset($default_values['settings']['title_field'])) {
+      if (!$default_values['settings']['title_field']) {
         // User action required on the image title.
         $action_fields[] = 'title';
       }
@@ -280,8 +286,8 @@ class SwiperFormatterSettings extends FormElement {
       }
     }
 
-    if (isset($default_values['settings']) && isset($default_values['settings']['alt_field'])) {
-      if ($default_values['settings']['alt_field'] == FALSE) {
+    if (isset($default_values['settings']['alt_field'])) {
+      if (!$default_values['settings']['alt_field']) {
         // User action required on the image title.
         $action_fields[] = 'alt';
       }

@@ -2,4 +2,4 @@ name: Swiper formatter
 type: module
 description: 'Integration of Swiper as a configuration entity, with a couple of field formatters and views style.'
 package: 'Other'
-core_version_requirement: ^8.8 || ^9 || ^10
+core_version_requirement: ^10

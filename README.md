@@ -123,7 +123,7 @@ three different ways for using with Views:
 
 #### TODO
 
-- Provide support for Paragraphs
+- ~~Provide support for Paragraphs~~
 - Develop CKEditor 5 plugin
 
 

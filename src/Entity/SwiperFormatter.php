@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\swiper_formatter\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
@@ -56,21 +58,21 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
    *
    * @var string
    */
-  protected $id;
+  protected string $id;
 
   /**
    * Swiper entity label.
    *
    * @var string
    */
-  protected $label;
+  protected string $label;
 
   /**
    * Swiper entity description.
    *
    * @var string
    */
-  protected $description;
+  protected string $description;
 
   /**
    * Swiper entity status.
@@ -84,12 +86,15 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
    *
    * @var array
    */
-  public $swiper_options = [];
+  public array $swiper_options = [];
 
   /**
    * Swipers getter.
+   *
+   * @return array
+   *   An array with swiper options, keyed by entity id.
    */
-  public static function getSwipers() {
+  public static function getSwipers(): array {
     $swiper_options = [];
     $swipers = static::loadMultiple();
     if (!empty($swipers)) {
@@ -109,20 +114,26 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
    * Swipers setter.
    *
    * @param array $swiper_options
-   *   An array of options to assing to property.
+   *   An array of options to assign as property.
+   *
+   * @return SwiperFormatter
+   *   A refreshed instance of this class.
    */
-  public function setSwiper(array $swiper_options = []) {
+  public function setSwiper(array $swiper_options = []): SwiperFormatter {
     $this->swiper_options = $swiper_options;
     return $this;
   }
 
   /**
    * Prepare #options for swiper template options form field.
+   *
+   * @return array
+   *   An array with all available templates, keyed by id.
    */
-  public static function getSwiperTemplates() {
+  public static function getSwiperTemplates(): array {
+    $templates = [];
     $swipers = static::getSwipers();
     if (!empty($swipers)) {
-      $templates = [];
       foreach ($swipers as $id => $swiper) {
         $templates[$id] = $swiper['label'];
       }

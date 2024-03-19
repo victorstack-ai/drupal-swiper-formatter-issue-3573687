@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
@@ -8,7 +10,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\swiper_formatter\SwiperFormatterTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -20,8 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "swiper_formatter_entity",
  *   label = @Translation("Swiper entity"),
  *   field_types = {
- *     "entity_reference",
- *     "entity_reference_revisions"
+ *     "entity_reference"
  *   },
  *   quickedit = {
  *     "editor" = "form"
@@ -30,6 +30,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @phpstan-consistent-constructor
  */
 class SwiperFormatterEntity extends EntityReferenceEntityFormatter {
+
   use SwiperFormatterTrait;
 
   /**
@@ -46,22 +47,15 @@ class SwiperFormatterEntity extends EntityReferenceEntityFormatter {
     LoggerChannelFactoryInterface $logger_factory,
     EntityTypeManagerInterface $entity_type_manager,
     EntityDisplayRepositoryInterface $entity_display_repository,
-    EntityFieldManagerInterface $entity_field_manager,
-    RedirectDestinationInterface $destination,
-    MessengerInterface $messenger) {
-
+    protected EntityFieldManagerInterface $entityFieldManager,
+    protected RedirectDestinationInterface $destination) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings, $logger_factory, $entity_type_manager, $entity_display_repository);
-
-    $this->entityFieldManager = $entity_field_manager;
-    $this->destination = $destination;
-    $this->swiperFormatter = $this->entityTypeManager->getStorage('swiper_formatter');
-    $this->messenger = $messenger;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SwiperFormatterEntity {
     return new static(
       $plugin_id,
       $plugin_definition,
@@ -74,8 +68,7 @@ class SwiperFormatterEntity extends EntityReferenceEntityFormatter {
       $container->get('entity_type.manager'),
       $container->get('entity_display.repository'),
       $container->get('entity_field.manager'),
-      $container->get('redirect.destination'),
-      $container->get('messenger')
+      $container->get('redirect.destination')
     );
   }
 

@@ -3,14 +3,14 @@
  * Init any instances of Swiper on the page.
  */
 
-(function ($, Drupal, drupalSettings, once) {
+(function (Drupal, once) {
 
   'use strict';
 
   Drupal.swiper_formatter = Drupal.swiper_formatter || {};
 
    /**
-    * Drupal.behaviors implementation.
+    * Drupal.behaviors implementation for Swiper formatter.
     *
     * Register and initialise all Swiper instances on the page.
     *
@@ -19,36 +19,33 @@
 
     attach: function(context, settings) {
 
-      var self = this;
+      const self = this;
 
-      var swiper_formatter_settings = settings.swiper_formatter || null;
+      const swiper_formatter_settings = settings.swiper_formatter || null;
 
-      if (swiper_formatter_settings && $.type(swiper_formatter_settings.swipers) !== 'undefined') { 
+      if (swiper_formatter_settings && typeof swiper_formatter_settings.swipers !== 'undefined') {
 
-        var swipers = {};
+        let swipers = {};
 
-        once('swiperFormaterInit', '.swiper-container', context).forEach(function(swiperContainer) {
+        once('swiperFormatterInit', '.swiper-container', context).forEach(function(swiperContainer) {
 
 	        if (swiperContainer.id) {
-            var swiperSettings = swiper_formatter_settings.swipers[swiperContainer.id];
+            const swiperSettings = swiper_formatter_settings.swipers[swiperContainer.id];
             if (typeof swiperSettings === 'object' && typeof Swiper !== 'undefined') {
 	
               if (swiperSettings.pagination.type === 'progressbar') {
-	              $(swiperContainer).addClass('progressbar');
+	              swiperContainer.classList.add('progressbar');
               }
 
 	            swipers[swiperContainer.id] = new Swiper('#' + swiperContainer.id, swiperSettings);
 
               if (swipers[swiperContainer.id]) {
 
-                // Swiper's slideChangeTransitionEnd event.
-                // @todo: Make this as option in entity configuration form.
-                // swipers[swiperContainer.id].on('slideChangeTransitionEnd', function(e) {
-                //   self.showHidden(this);
-                // });
-
                 // A custom links (anywhere on the page) that trigger swiper slides.
-                self.registerTriggers(swipers[swiperContainer.id], $(context).find('.swiper-trigger'), context, settings); 
+                const triggers = context.querySelectorAll('.swiper-trigger');
+                if (triggers) {
+                  self.registerTriggers(swipers[swiperContainer.id], Array.from(triggers));
+                }
               }
 	          }
 	        }
@@ -57,29 +54,11 @@
     },
 
     /**
-     * Show's any ".hidden" elements on a new slide.
-     *
-     * @param object swiper
-     *  Current Swiper object.
-     */
-    showHidden: function(swiper) {
-      if (swiper && swiper.slides.length > 0) {
-        $.each(swiper.slides, function(index, slide) {
-          if (index == swiper.activeIndex) {
-            $(slide).find('.hidden').each(function(d, hidden) {
-              $(hidden).removeClass('hidden');
-            });
-          }
-        });
-      }
-    },
-
-    /**
      * Run sliding from anywhere, with some markup attributes defined.
      *
-     * @param object swiper
+     * @param swiper
      *  Current Swiper object.
-     * @param array triggers
+     * @param triggers
      *  Array with trigger elements/objects.
      * @code
      *  <ul>
@@ -89,19 +68,21 @@
      * @endcode
      */
     registerTriggers: function(swiper, triggers) {
-      triggers.each(function(trigger) {
-        $(this).on('click', function(e) {
+      triggers.forEach(function(trigger) {
+        trigger.addEventListener('click', (e) => {
 
+          const target = e.currentTarget || e.target;
           // Take care of siblings' active class.
-          if ($(this).parent().siblings().length) {
-            $(this).parent().siblings().each(function(i, sibling) {
-              $(sibling).find('.swiper-trigger').removeClass('active');
+          if (target.parentNode.siblings().length) {
+              //.parent().siblings().length) {
+            target.parentNode.siblings().forEach((i, sibling) => {
+              sibling.querySelector('.swiper-trigger').classList.remove('active');
             });
           }
 
-          $(e.currentTarget).addClass('active');
+          target.classList.add('active');
 
-          var index = $(this).attr('data-index') ? parseInt($(this).attr('data-index')) - 1 : 0;
+          const index = target.getAttribute('data-index') ? parseInt(target.getAttribute('data-index')) - 1 : 0;
           swiper.slideTo(index);
           return false;
         });
@@ -109,4 +90,4 @@
     }
   };
 
-})(jQuery, Drupal, drupalSettings, once);
+})(Drupal, once);
