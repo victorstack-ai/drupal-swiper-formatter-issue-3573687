@@ -106,7 +106,7 @@ class SwiperFormatterStyle extends StylePluginBase {
     // $this->view->initStyle();
     if ($this->usesFields()) {
 
-      $fields = $this->view->style_plugin->displayHandler->handlers['field'];
+      $fields = (array) $this->view->style_plugin->displayHandler->handlers['field'];
       $entity_fields = [];
 
       foreach ($fields as $field_name => $field) {
@@ -178,7 +178,7 @@ class SwiperFormatterStyle extends StylePluginBase {
       $this->options['is_image'] = FALSE;
 
       if ($this->usesFields()) {
-        $fields = $this->view->style_plugin->displayHandler->handlers['field'];
+        $fields = (array) $this->view->style_plugin->displayHandler->handlers['field'];
         if (count($fields) == 1 || count($fields) == 2) {
 
           foreach ($fields as $field) {
