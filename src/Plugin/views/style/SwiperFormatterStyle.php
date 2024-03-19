@@ -234,8 +234,11 @@ class SwiperFormatterStyle extends StylePluginBase {
           if (isset($row['#row'])) {
             $entity = $row['#row']->_entity;
           }
-          else {
+          elseif (isset($row['#theme'])) {
             $entity = $row['#' . $row['#theme']] ?? NULL;
+          }
+          elseif (isset($row['#entity_type'])) {
+            $entity = $row['#' . $row['#entity_type']] ?? NULL;
           }
 
           // Take care of caption.
