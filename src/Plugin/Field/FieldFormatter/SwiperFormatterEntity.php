@@ -2,18 +2,16 @@
 
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter;
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\Core\Routing\RedirectDestinationInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-
+use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\swiper_formatter\SwiperFormatterTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'swiper_formatter_text' formatter variant.
@@ -22,12 +20,14 @@ use Drupal\swiper_formatter\SwiperFormatterTrait;
  *   id = "swiper_formatter_entity",
  *   label = @Translation("Swiper entity"),
  *   field_types = {
- *     "entity_reference"
+ *     "entity_reference",
+ *     "entity_reference_revisions"
  *   },
  *   quickedit = {
  *     "editor" = "form"
  *   }
  * )
+ * @phpstan-consistent-constructor
  */
 class SwiperFormatterEntity extends EntityReferenceEntityFormatter {
   use SwiperFormatterTrait;

@@ -2,22 +2,20 @@
 
 namespace Drupal\swiper_formatter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\File\FileUrlGeneratorInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\Core\Routing\RedirectDestinationInterface;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Field\FormatterBase;
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
-
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Routing\RedirectDestinationInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Common methods for a few possible Swiper formatters.

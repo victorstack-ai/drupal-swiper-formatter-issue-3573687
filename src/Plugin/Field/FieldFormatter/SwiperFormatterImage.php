@@ -15,6 +15,7 @@ use Drupal\swiper_formatter\SwiperFormatterTrait;
  *     "image"
  *   }
  * )
+ * @phpstan-consistent-constructor
  */
 class SwiperFormatterImage extends ImageFormatter {
   use SwiperFormatterTrait;

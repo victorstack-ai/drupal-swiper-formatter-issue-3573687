@@ -3,15 +3,16 @@
 namespace Drupal\swiper_formatter\Form;
 
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-
+use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A Swiper entity form.
  *
  * @property \Drupal\swiper_formatter\SwiperFormatterInterface $entity
+ *
+ * @phpstan-consistent-constructor
  */
 class SwiperFormatterForm extends EntityForm {
 
@@ -25,7 +26,7 @@ class SwiperFormatterForm extends EntityForm {
   /**
    * EntityManager class.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -259,13 +260,11 @@ class SwiperFormatterForm extends EntityForm {
       '#title' => $this->t('Navigation settings'),
       '#open' => TRUE,
       '#description' => $this->t('Swiper Navigation module, see <a target"_blank" href="https://swiperjs.com/swiper-api#navigation">Swiper.js | Navigation</a>.'),
-      '#open' => TRUE,
     ];
 
     $form['swiper_options']['navigation']['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable navigation'),
-    // $this->entity->get('navigation_enabled'),
       '#default_value' => $default_values['navigation']['enabled'],
       '#description' => $this->t("Show Swiper's prev/next buttons."),
     ];

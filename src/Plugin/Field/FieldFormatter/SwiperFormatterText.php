@@ -2,8 +2,8 @@
 
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
-use Drupal\text\Plugin\Field\FieldFormatter\TextDefaultFormatter;
 use Drupal\swiper_formatter\SwiperFormatterTrait;
+use Drupal\text\Plugin\Field\FieldFormatter\TextDefaultFormatter;
 
 /**
  * Plugin implementation of the 'swiper_formatter_text' formatter variant.
@@ -20,6 +20,7 @@ use Drupal\swiper_formatter\SwiperFormatterTrait;
  *     "editor" = "form"
  *   }
  * )
+ * @phpstan-consistent-constructor
  */
 class SwiperFormatterText extends TextDefaultFormatter {
   use SwiperFormatterTrait;

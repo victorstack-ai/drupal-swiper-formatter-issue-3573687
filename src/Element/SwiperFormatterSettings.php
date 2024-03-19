@@ -3,10 +3,9 @@
 namespace Drupal\swiper_formatter\Element;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Url;
-use Drupal\Core\Link;
-
 use Drupal\swiper_formatter\Entity\SwiperFormatter;
 
 /**
@@ -68,7 +67,7 @@ class SwiperFormatterSettings extends FormElement {
 
     $default_values = isset($element['#default_value']) && !empty($element['#default_value']) ? $element['#default_value'] : [];
     // $has_template,
-    $template = isset($default_values['template']) ? $default_values['template'] : NULL;
+    $template = $default_values['template'] ?? NULL;
     $options = SwiperFormatter::getSwiperTemplates();
 
     if (empty($options)) {
@@ -160,14 +159,14 @@ class SwiperFormatterSettings extends FormElement {
 
           static::imageCaption($default_values, $caption_options, $action_fields);
 
-          if ($name && isset($default_values['caption']) && isset($default_values['caption']['entity_fields']) && !empty($default_values['caption']['entity_fields'])) {
+          if (!empty($default_values['caption']['entity_fields'])) {
             static::defaultCaption($default_values['caption']['entity_fields'], $name, $caption_options, $action_fields);
           }
           $caption_description .= ' In case of a field other than image\'s alt and title caption will show even if chosen field itself is disabled for this Display. This way some field can serve exclusively as a caption.';
           break;
 
         default:
-          if ($name && isset($default_values['caption']) && isset($default_values['caption']['entity_fields']) && !empty($default_values['caption']['entity_fields'])) {
+          if (!empty($default_values['caption']['entity_fields'])) {
             static::defaultCaption($default_values['caption']['entity_fields'], $name, $caption_options, $action_fields);
           }
           $caption_description .= $type == 'views' ? " This field won't show in the render result (within slide) but only as a caption." : ' Caption will show even if the field itself is disabled for this Display. This way some field can serve exclusively as a caption.';
@@ -180,7 +179,7 @@ class SwiperFormatterSettings extends FormElement {
         '#type' => 'select',
         '#options' => $caption_options,
         '#empty_option' => t('@none', ['@none' => '- None -']),
-        '#default_value' => $default_values && isset($default_values['caption']) && isset($default_values['caption']['value']) ? $default_values['caption']['value'] : NULL,
+        '#default_value' => $default_values['caption']['value'] ?? NULL,
         '#description' => t('@caption_description', ['@caption_description' => $caption_description]),
         '#weight' => 1,
       ];

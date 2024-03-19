@@ -2,15 +2,12 @@
 
 namespace Drupal\swiper_formatter\Plugin\views\style;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-
-use Drupal\Component\Utility\Html;
-
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Style plugin to render each item in an ordered or unordered list.
@@ -24,6 +21,7 @@ use Drupal\views\Plugin\views\style\StylePluginBase;
  *   theme = "swiper_formatter",
  *   display_types = {"normal"}
  * )
+ * @phpstan-consistent-constructor
  */
 class SwiperFormatterStyle extends StylePluginBase {
 
@@ -230,7 +228,7 @@ class SwiperFormatterStyle extends StylePluginBase {
             $entity = $row['#row']->_entity;
           }
           else {
-            $entity = isset($row['#' . $row['#theme']]) ? $row['#' . $row['#theme']] : NULL;
+            $entity = $row['#' . $row['#theme']] ?? NULL;
           }
 
           // Take care of caption.
@@ -327,7 +325,7 @@ class SwiperFormatterStyle extends StylePluginBase {
       }
 
       if ($type == 'caption') {
-        $values = isset($field_values[$index]['value']) ? $field_values[$index]['value'] : NULL;
+        $values = $field_values[$index]['value'] ?? NULL;
       }
       elseif ($type == 'background') {
         // Lazy load support.
@@ -356,7 +354,7 @@ class SwiperFormatterStyle extends StylePluginBase {
    */
   protected function lazyLoad(int $index, int $delta, array $field_values) {
     $background = NULL;
-    $image_target_id = isset($field_values[$index]['target_id']) ? $field_values[$index]['target_id'] : NULL;
+    $image_target_id = $field_values[$index]['target_id'] ?? NULL;
     if ($image_target_id) {
       if ($file = $this->entityTypeManager->getStorage('file')->load($image_target_id)) {
         if (isset($this->options['image_style']) && !empty($this->options['image_style'])) {
