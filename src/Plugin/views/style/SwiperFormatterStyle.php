@@ -52,6 +52,13 @@ class SwiperFormatterStyle extends StylePluginBase {
   protected $swiperFormatter;
 
   /**
+   * Swiper Configuration Entity.
+   *
+   * @var \Drupal\Core\Config\Entity\ConfigEntityInterface
+   */
+  protected $swiperStorage;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityFieldManagerInterface $entity_field_manager, EntityTypeManagerInterface $entity_type_manager) {
