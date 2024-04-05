@@ -82,7 +82,9 @@ trait SwiperFormatterTrait {
         'field_config' => $entity_type . '.' . $this->fieldDefinition->getTargetBundle() . '.' . $this->fieldDefinition->getFieldStorageDefinition()->getName(),
       ];
 
-      $route_params[$entity_type . '_type'] = $this->fieldDefinition->getTargetBundle();
+      $type = $entity_type == 'paragraph' ? 'paragraphs' : $entity_type;
+      $route_params[$type . '_type'] = $this->fieldDefinition->getTargetBundle();
+
       $uri_options = [
         'fragment' => 'edit-settings-title-field',
       ];
