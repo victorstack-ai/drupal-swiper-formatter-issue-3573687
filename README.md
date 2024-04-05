@@ -50,7 +50,7 @@ Views content in the classic way, some type of fields within Views etc.
   sub-fields as well.
 
 - **Swiper.js modules integrated:**
-  Pagination, Navigation, Autoplay, Lazy Loading (for images)
+  Pagination, Navigation, Scrollbar, Autoplay, Lazy Loading (for images)
 
 - **PHP 8.x** version compatibility.
 

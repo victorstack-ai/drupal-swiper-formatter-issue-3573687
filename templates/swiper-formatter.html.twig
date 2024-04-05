@@ -39,6 +39,11 @@
         <div{{ pagination_attributes}}></div>
       {% endif %}
 
+      {# Add Scrollbar #}
+      {% if settings.scrollbar.enabled %}
+        <div{{ scrollbar_attributes}}></div>
+      {% endif %}
+
       {# Add navigation buttons #}
       {% if settings.navigation.enabled %}
         <div{{ navigation_attributes.prev }}></div>

@@ -74,6 +74,7 @@ function swiper_formatter_theme(): array {
         'settings' => [],
         'content_attributes' => [],
         'pagination_attributes' => [],
+        'scrollbar_attributes' => [],
         'navigation_attributes' => [
           'prev' => [],
           'next' => [],
@@ -265,6 +266,18 @@ function template_preprocess_swiper_formatter(array &$variables): void {
       ],
     ];
     $variables['pagination_attributes'] = new Attribute($pagination_attributes);
+  }
+
+  if (!empty($formatter_settings['scrollbar']['enabled'])) {
+
+    $formatter_settings['scrollbar']['el'] = '.scrollbar-' . $variables['id'];
+    $scrollbar_attributes = [
+      'class' => [
+        'swiper-scrollbar',
+        'scrollbar-' . $variables['id'],
+      ],
+    ];
+    $variables['scrollbar_attributes'] = new Attribute($scrollbar_attributes);
   }
 
   foreach ($variables['content'] as &$item) {

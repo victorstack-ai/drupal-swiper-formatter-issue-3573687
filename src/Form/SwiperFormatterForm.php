@@ -22,6 +22,7 @@ class SwiperFormatterForm extends EntityForm {
   const SWIPER_MODULES = [
     'navigation',
     'pagination',
+    'scrollbar',
     'autoplay',
     'lazy',
   ];
@@ -218,6 +219,13 @@ class SwiperFormatterForm extends EntityForm {
       '#description' => $this->t('A comma separated list of css selectors for which swiping behaviour is disabled, when those are in focus; i.e. <em>.no-swipe, button, input</em>'),
     ];
 
+    $form['swiper_options']['slides']['mousewheel'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Mousewheel'),
+      '#default_value' => $default_values['mousewheel'] ?? FALSE,
+      '#description' => $this->t('Enable navigation through slides using mouse wheel.'),
+    ];
+
     $form['swiper_options']['slides']['grabCursor'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Grab cursor type'),
@@ -399,6 +407,55 @@ class SwiperFormatterForm extends EntityForm {
           ':input[name="swiper_options[pagination][type]"]' => ['value' => 'bullets'],
         ],
       ],
+    ];
+
+    $form['swiper_options']['scrollbar'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Scrollbar'),
+      '#open' => TRUE,
+      '#description' => $this->t('Swiper Scrollbar module, see <a target="_blank" href="https://swiperjs.com/swiper-api#scrollbar">Swiper.js | Scrollbar</a>.'),
+    ];
+
+    $form['swiper_options']['scrollbar']['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable scrollbar'),
+      '#default_value' => $default_values['scrollbar']['enabled'] ?? FALSE,
+    ];
+
+    $scrollbar_enabled_state = [
+      'visible' => [
+        ':input[name="swiper_options[scrollbar][enabled]"]' => ['checked' => TRUE],
+      ],
+    ];
+
+    $form['swiper_options']['scrollbar']['draggable'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Draggable'),
+      '#default_value' => $default_values['scrollbar']['draggable'] ?? FALSE,
+      '#states' => $scrollbar_enabled_state,
+    ];
+
+    $form['swiper_options']['scrollbar']['dragSize'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Drag size'),
+      '#maxlength' => 255,
+      '#default_value' => $default_values['scrollbar']['dragSize'] ?? 'auto',
+      '#description' => $this->t('Size of scrollbar draggable element in px or "auto"'),
+      '#states' => $scrollbar_enabled_state,
+    ];
+
+    $form['swiper_options']['scrollbar']['hide'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Hide scrollbar automatically after user interaction'),
+      '#default_value' => $default_values['scrollbar']['hide'] ?? TRUE,
+      '#states' => $scrollbar_enabled_state,
+    ];
+
+    $form['swiper_options']['scrollbar']['snapOnRelease'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Snap slider position to slides on release'),
+      '#default_value' => $default_values['scrollbar']['snapOnRelease'] ?? FALSE,
+      '#states' => $scrollbar_enabled_state,
     ];
 
     $form['swiper_options']['lazy'] = [

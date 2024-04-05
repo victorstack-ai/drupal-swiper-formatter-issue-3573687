@@ -67,6 +67,9 @@ swiper_formatter.swiper_formatter.*:
             noSwipingSelector:
               type: string
               label: Exclude selectors, no swipe
+            mousewheel:
+              type: boolean
+              label: Enable navigation through slides using mouse wheel
             grabCursor:
               type: boolean
               label: Set grab cursor over slide
@@ -124,6 +127,25 @@ swiper_formatter.swiper_formatter.*:
             clickable:
               type: boolean
               label: Bullets clickable
+        scrollbar:
+          type: mapping
+          label: Scrollbar settings
+          mapping:
+            enabled:
+              type: boolean
+              label: Enable/disable scrollbar
+            draggable:
+              type: boolean
+              label: Draggable
+            dragSize:
+              type: string
+              label: Drag size
+            hide:
+              type: boolean
+              label: Hide scrollbar automatically after user interaction
+            snapOnRelease:
+              type: boolean
+              label: Snap slider position to slides on release
         lazy:
           type: mapping
           label: Navigation settings

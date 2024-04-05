@@ -22,6 +22,12 @@ swiper_options:
     type: bullets
     dynamicBullets: false
     clickable: false
+  scrollbar:
+    enabled: false
+    draggable: false
+    dragSize: 'auto'
+    hide: true
+    snapOnRelease: false
   lazy:
     enabled: false
     checkInView: false
@@ -47,5 +53,6 @@ swiper_options:
   slidesPerView: 1
   loopedSlides: 1
   noSwipingSelector: '.no-swipe, button, input'
+  mousewheel: false
   grabCursor: false
   cssMode: false
