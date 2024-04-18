@@ -89,6 +89,7 @@ class SwiperFormatterStyle extends StylePluginBase {
 
     $swiper_storage = $this->entityTypeManager->getStorage('swiper_formatter');
     if ($loaded = $swiper_storage->load($this->options['template'])) {
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $loaded */
       $this->options += $loaded->get('swiper_options');
     }
 
@@ -171,7 +172,7 @@ class SwiperFormatterStyle extends StylePluginBase {
 
     $swiper_storage = $this->entityTypeManager->getStorage('swiper_formatter');
     if ($loaded = $swiper_storage->load($this->options['template'])) {
-
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $loaded */
       $this->options += $loaded->get('swiper_options');
       $this->options['field_type'] = 'views';
 

@@ -1,36 +1,35 @@
 langcode: en
 status: true
 dependencies: {  }
-id: default
-label: Default
-description: 'This default template is mostly for demonstration purpose, feel free to edit it or create (as many) new ones.'
+id: breakpoint960_template
+label: 'Breakpoint960 Template'
+description: ''
+breakpoint: true
 swiper_options:
   autoplay:
     enabled: false
     delay: 4000
-    disableOnInteraction: true
+    disableOnInteraction: false
     pauseOnMouseEnter: false
     reverseDirection: false
     stopOnLastSlide: false
-    waitForTransition: true
+    waitForTransition: false
   navigation:
     enabled: true
     hideOnClick: false
   pagination:
-    enabled: false
+    enabled: true
     type: bullets
-    dynamicBullets: false
-    clickable: false
+    dynamicBullets: true
+    clickable: true
   scrollbar:
     enabled: false
     draggable: false
-    dragSize: 'auto'
-    hide: true
+    dragSize: auto
+    hide: false
     snapOnRelease: false
   breakpoints:
     -
-      breakpoint: null
-      swiper_template: null
       weight: 0
   lazy:
     enabled: false
@@ -39,28 +38,25 @@ swiper_options:
     loadPrevNext: false
     loadPrevNextAmount: 1
     scrollingElement: window
-  enabled: true
   source: remote
-  breakpoint: false
-  breakpointsBase: 'window'
-  autoHeight: true
+  breakpointsBase: window
+  autoHeight: 0
   width: null
   height: null
-  observer: false
+  observer: true
   updateOnWindowResize: true
   resizeObserver: true
   direction: horizontal
   effect: slide
-  loop: false
-  rewind: false
-  centeredSlides: false
+  loop: 0
+  rewind: 0
+  centeredSlides: 0
   speed: 300
-  slidesPerView: 1
-  spaceBetween: 0
+  slidesPerView: 2
+  spaceBetween: 40
   slidesPerGroup: 1
   loopedSlides: 1
   noSwipingSelector: '.no-swipe, button, input'
-  mousewheel: false
-  grabCursor: false
-  cssMode: false
-
+  mousewheel: 0
+  grabCursor: 0
+  cssMode: 0

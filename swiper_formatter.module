@@ -14,12 +14,13 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
+use Drupal\swiper_formatter\SwiperFormatterInterface;
 use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_help().
  */
-function swiper_formatter_help($route_name, RouteMatchInterface $route_match): string|MarkupInterface|NULL {
+function swiper_formatter_help(string $route_name, RouteMatchInterface $route_match): string|MarkupInterface|NULL {
   switch ($route_name) {
 
     case 'help.page.swiper_formatter':
@@ -153,7 +154,6 @@ function swiper_formatter_theme_suggestions_swiper_formatter_slide(array $variab
 
   $suggestions = [];
   // Twig templates based on Swiper view data.
-  // && isset($variables['slide']['#theme'])) {.
   if (isset($variables['slide']) && isset($variables['object'])) {
 
     /** @var \Drupal\views\ViewExecutable $variables['object'] */
@@ -223,11 +223,54 @@ function template_preprocess_swiper_formatter(array &$variables): void {
 
   $variables['content_attributes'] = new Attribute($content_attributes);
 
-  // Navigation handling.
-  $prev_attributes = [];
-  $next_attributes = [];
+  // Breakpoints check.
+  $formatter_settings['has_breakpoint_navigation'] = FALSE;
+  $formatter_settings['has_breakpoint_pagination'] = FALSE;
+  $formatter_settings['has_breakpoint_slides_per_view'] = 1;
+  $formatter_settings['has_breakpoint_slides_per_group'] = 1;
 
-  if ($formatter_settings['navigation']['enabled']) {
+  if (!empty($formatter_settings['breakpoints'])) {
+    $breakpoints = [];
+    foreach ($formatter_settings['breakpoints'] as $breakpoint) {
+      if (isset($breakpoint['swiper_template'])) {
+        $breakpoint_template = \Drupal::service('entity_type.manager')->getStorage('swiper_formatter')->load($breakpoint['swiper_template']);
+        if ($breakpoint_template instanceof SwiperFormatterInterface & !empty($breakpoint['breakpoint'])) {
+          /** @var \Drupal\swiper_formatter\Entity\SwiperFormatter $breakpoint_template */
+          $breakpoints[$breakpoint['breakpoint']] = $breakpoint_template->swiper_options;
+        }
+      }
+    }
+    if (!empty($breakpoints)) {
+      $formatter_settings['breakpoints'] = [];
+      $include = ['slidesPerView', 'spaceBetween', 'navigation', 'pagination'];
+      foreach ($breakpoints as $key => $breakpoint) {
+        foreach ($breakpoint as $k => $b) {
+          if (in_array($k, $include)) {
+            $formatter_settings['breakpoints'][$key][$k] = $b;
+            if ($k == 'navigation') {
+              $formatter_settings['has_breakpoint_navigation'] = TRUE;
+            }
+            if ($k == 'pagination') {
+              $formatter_settings['has_breakpoint_pagination'] = TRUE;
+            }
+            if ($k == 'slidesPerView') {
+              $formatter_settings['has_breakpoint_slides_per_view'] = $b;
+            }
+            if ($k == 'slidesPerGroup') {
+              $formatter_settings['has_breakpoint_slides_per_group'] = $b;
+            }
+
+            $formatter_settings['has_breakpoint_slides_per_group'] = FALSE;
+          }
+        }
+      }
+    }
+    else {
+      unset($formatter_settings['breakpoints']);
+    }
+  }
+
+  if ($formatter_settings['navigation']['enabled'] || $formatter_settings['has_breakpoint_navigation']) {
 
     // We need to do these two separately, in order to
     // preserve classes for default Swiper styling/CSS.
@@ -254,11 +297,9 @@ function template_preprocess_swiper_formatter(array &$variables): void {
     ];
   }
 
-  $pagination_attributes = [];
-  if ($formatter_settings['pagination']['enabled']) {
+  if ($formatter_settings['pagination']['enabled'] || $formatter_settings['has_breakpoint_pagination']) {
 
     $formatter_settings['pagination']['el'] = '.pagination-' . $variables['id'];
-
     $pagination_attributes = [
       'class' => [
         'swiper-pagination',
@@ -327,6 +368,7 @@ function template_preprocess_swiper_formatter(array &$variables): void {
       'swipers' => [],
     ];
   }
+
   $variables['#attached']['drupalSettings']['swiper_formatter']['swipers'][$variables['id']] = $formatter_settings;
 
   $variables['#attached']['library'][] = 'swiper_formatter/' . $formatter_settings['source'];

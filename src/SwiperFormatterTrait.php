@@ -49,12 +49,14 @@ trait SwiperFormatterTrait {
     }
 
     $settings = $this->fieldDefinition->getSettings();
-
+    $is_breakpoint = NULL;
     if (!empty($this->getSetting('template'))) {
       $swiper_formatter = $this->entityTypeManager->getStorage('swiper_formatter');
 
       if ($swiper_entity = $swiper_formatter->load($this->getSetting('template'))) {
+        /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $swiper_entity */
         $settings += $swiper_entity->get('swiper_options');
+        $is_breakpoint = $swiper_entity->get('breakpoint');
       }
     }
 
@@ -67,6 +69,7 @@ trait SwiperFormatterTrait {
         'template' => $this->getSetting('template'),
         'settings' => $settings,
         'custom_link' => $this->getSetting('custom_link'),
+        'is_breakpoint' => $is_breakpoint,
         'caption' => [
           'value' => $this->getSetting('caption'),
           'entity_fields' => $entity_fields,
@@ -175,7 +178,7 @@ trait SwiperFormatterTrait {
     $formatter_settings['field_name'] = $this->fieldDefinition->getFieldStorageDefinition()->getName();
     $swiper_formatter = $this->entityTypeManager->getStorage('swiper_formatter');
     if ($swiper_entity = $swiper_formatter->load($this->getSetting('template'))) {
-
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $swiper_entity */
       $formatter_settings += $swiper_entity->get('swiper_options');
 
       $id = Html::getUniqueId('swiper-' . $swiper_entity->id() . '-' . $this->fieldDefinition->getTargetEntityTypeId() . '-' . $this->fieldDefinition->getTargetBundle() . '-' . $this->fieldDefinition->getFieldStorageDefinition()->getName());

@@ -74,10 +74,10 @@ class SwiperFormatterSettings extends FormElement {
 
     $default_values = isset($element['#default_value']) && !empty($element['#default_value']) ? $element['#default_value'] : [];
     $template = $default_values['template'] ?? NULL;
-    $options = SwiperFormatter::getSwiperTemplates();
+    $options = SwiperFormatter::getSwiperTemplates(TRUE);
 
     if (empty($options)) {
-      $warning_line = "There's no Swiper templates created yet, ";
+      $warning_line = "There's no Swiper templates created yet.";
       if (\Drupal::service('current_user')->hasPermission('administer swiper')) {
         $warning = t('@warning_line create one first <a target="_blank" href=":url">here</a>.', [
           '@warning_line' => $warning_line,

@@ -26,6 +26,7 @@ class SwiperFormatterListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity): array {
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $entity */
     $row['label'] = $entity->label();
     $row['id'] = $entity->id();
     $row['status'] = $entity->status() ? $this->t('Enabled') : $this->t('Disabled');

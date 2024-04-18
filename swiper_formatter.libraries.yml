@@ -7,6 +7,7 @@ remote:
     gpl-compatible: true
   js:
     //unpkg.com/swiper@11/swiper-bundle.min.js: { type: external, minified: true }
+
   css:
     component: 
       //unpkg.com/swiper@11/swiper-bundle.min.css: { type: external, minified: true }

@@ -9,7 +9,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\swiper_formatter\SwiperFormatterInterface;
 
 /**
- * Defines the Nk tools swiper entity type.
+ * Defines the Swiper entity type.
  *
  * @ConfigEntityType(
  *   id = "swiper_formatter",
@@ -47,6 +47,7 @@ use Drupal\swiper_formatter\SwiperFormatterInterface;
  *     "label",
  *     "description",
  *     "status",
+ *     "breakpoint",
  *     "swiper_options"
  *   }
  * )
@@ -75,11 +76,11 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
   protected string $description;
 
   /**
-   * Swiper entity status.
+   * Flagged as breakpoint.
    *
    * @var bool
    */
-  protected $status;
+  protected bool $breakpoint = FALSE;
 
   /**
    * A collection of all of the Swiper's properties into a single array.
@@ -89,37 +90,29 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
   public array $swiper_options = [];
 
   /**
-   * Swipers getter.
-   *
-   * @return array
-   *   An array with swiper options, keyed by entity id.
+   * {@inheritdoc}
    */
-  public static function getSwipers(): array {
+  public static function getSwipers(bool $check_breakpoint = FALSE): array {
     $swiper_options = [];
     $swipers = static::loadMultiple();
     if (!empty($swipers)) {
       foreach ($swipers as $swiper_entity) {
-        $swiper_entity_storage = $swiper_entity->load($swiper_entity->id());
-        $swiper_options[$swiper_entity->id()] = [
-          'id' => $swiper_entity->id(),
-          'label' => $swiper_entity_storage->label(),
-          'properties' => $swiper_entity_storage->toArray(),
-        ];
+        if (!$check_breakpoint || !$swiper_entity->get('breakpoint')) {
+          $swiper_options[$swiper_entity->id()] = [
+            'id' => $swiper_entity->id(),
+            'label' => $swiper_entity->label(),
+            'properties' => $swiper_entity->toArray(),
+          ];
+        }
       }
     }
     return $swiper_options;
   }
 
   /**
-   * Swipers setter.
-   *
-   * @param array $swiper_options
-   *   An array of options to assign as property.
-   *
-   * @return SwiperFormatter
-   *   A refreshed instance of this class.
+   * {@inheritdoc}
    */
-  public function setSwiper(array $swiper_options = []): SwiperFormatter {
+  public function setSwiper(array $swiper_options = []): SwiperFormatterInterface {
     $this->swiper_options = $swiper_options;
     return $this;
   }
@@ -130,9 +123,9 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
    * @return array
    *   An array with all available templates, keyed by id.
    */
-  public static function getSwiperTemplates(): array {
+  public static function getSwiperTemplates(bool $check_breakpoint = FALSE): array {
     $templates = [];
-    $swipers = static::getSwipers();
+    $swipers = static::getSwipers($check_breakpoint);
     if (!empty($swipers)) {
       foreach ($swipers as $id => $swiper) {
         $templates[$id] = $swiper['label'];

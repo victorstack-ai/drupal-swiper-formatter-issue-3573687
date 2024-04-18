@@ -1,6 +1,6 @@
 /**
  * @file
- * Init any instances of Swiper on the page.
+ * Init instances of Swiper on any page.
  */
 
 (function (Drupal, once) {
@@ -13,7 +13,6 @@
     * Drupal.behaviors implementation for Swiper formatter.
     *
     * Register and initialise all Swiper instances on the page.
-    *
     */
    Drupal.behaviors.nkToolsSwiper = {
 
@@ -37,9 +36,14 @@
 	              swiperContainer.classList.add('progressbar');
               }
 
-	            swipers[swiperContainer.id] = new Swiper('#' + swiperContainer.id, swiperSettings);
+              // Initialize Swiper now.
+              swipers[swiperContainer.id] = new Swiper('#' + swiperContainer.id, swiperSettings);
 
               if (swipers[swiperContainer.id]) {
+                // A special care for dynamic and/or clickable bullets.
+                swipers[swiperContainer.id].on('_beforeBreakpoint', (swiperEvent, breakpointParams) => {
+                  self.breakpointPagination(swiperEvent, breakpointParams);
+                });
 
                 // A custom links (anywhere on the page) that trigger swiper slides.
                 const triggers = context.querySelectorAll('.swiper-trigger');
@@ -54,11 +58,65 @@
     },
 
     /**
+      * Handle breakpoints pagination classes on window resize.
+      *
+      * @param {Object} swiperEvent
+      *  Current Swiper "_beforeBreakpoint" event object.
+      * @param {Object} breakpointParams
+      *  An object containing properties of current set breakpoint.
+      */
+    breakpointPagination: function(swiperEvent, breakpointParams) {
+      if (breakpointParams.pagination && breakpointParams.pagination.enabled) {
+        const paginationWrapper = swiperEvent.pagination.el;
+        if (paginationWrapper) {
+          const hasBullets = paginationWrapper.classList.contains('swiper-pagination-bullets');
+          const dynamicBullets = hasBullets && paginationWrapper.classList.contains('swiper-pagination-bullets-dynamic');
+          const clickableBullets = hasBullets && paginationWrapper.classList.contains('swiper-pagination-clickable');
+          if (breakpointParams.pagination.type !== 'bullets') {
+            if (hasBullets) {
+              paginationWrapper.classList.remove('swiper-pagination-bullets');
+            }
+            if (dynamicBullets) {
+              paginationWrapper.classList.remove('swiper-pagination-bullets-dynamic');
+            }
+            if (clickableBullets) {
+              paginationWrapper.classList.remove('swiper-pagination-clickable');
+            }
+            // Take care of style="width:" calculated value for dynamic bullets.
+            if (paginationWrapper.getAttribute('style')) {
+              let styles = paginationWrapper.getAttribute('style').split(';');
+
+              styles = styles.filter((style) => {
+                return style.indexOf('width:') < 0;
+              });
+
+              if (styles.length && styles[0]) {
+                paginationWrapper.setAttribute('style', styles.join(';'));
+              }
+              else {
+                paginationWrapper.removeAttribute('style');
+              }
+            }
+          }
+          else {
+            paginationWrapper.classList.add('swiper-pagination-bullets');
+            if (breakpointParams.pagination.dynamicBullets) {
+              paginationWrapper.classList.add('swiper-pagination-bullets-dynamic');
+            }
+            if (breakpointParams.pagination.clickable) {
+              paginationWrapper.classList.add('swiper-pagination-clickable');
+            }
+          }
+        }
+      }
+    },
+
+    /**
      * Run sliding from anywhere, with some markup attributes defined.
      *
-     * @param swiper
+     * @param {Object} swiper
      *  Current Swiper object.
-     * @param triggers
+     * @param {Array} triggers
      *  Array with trigger elements/objects.
      * @code
      *  <ul>
@@ -74,7 +132,6 @@
           const target = e.currentTarget || e.target;
           // Take care of siblings' active class.
           if (target.parentNode.siblings().length) {
-              //.parent().siblings().length) {
             target.parentNode.siblings().forEach((i, sibling) => {
               sibling.querySelector('.swiper-trigger').classList.remove('active');
             });

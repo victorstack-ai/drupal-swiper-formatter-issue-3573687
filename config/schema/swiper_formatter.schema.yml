@@ -20,6 +20,12 @@ swiper_formatter.swiper_formatter.*:
     source:
       type: string
       label: Swiper library source
+    breakpoint:
+      type: boolean
+      label: Template serves as Breakpoint
+    breakpointsBase:
+      type: string
+      label: Breakpoint base, window or container
     swiper_options:
       type: mapping
       mapping: 
@@ -36,6 +42,12 @@ swiper_formatter.swiper_formatter.*:
           observer:
             type: boolean
             label: Mutation Observer on Swiper and its elements
+          updateOnWindowResize:
+            type: boolean
+            label: Update on window resize
+          resizeObserver:
+            type: boolean
+            label: Use ResizeObserver
         slides:
           type: mapping
           label:
@@ -61,6 +73,12 @@ swiper_formatter.swiper_formatter.*:
             slidesPerView:
               type: integer
               label: Number of slides per view
+            spaceBetween:
+              type: integer
+              label: Space between slides
+            slidesPerGroup:
+              type: integer
+              label: Number of slides per group
             loopedSlides:
               type: integer
               label: Number of slides looped at once
@@ -120,13 +138,24 @@ swiper_formatter.swiper_formatter.*:
               label: Enable/disable pagination
             type:
               type: string
-              label: Paginatin type
+              label: Pagination type
             dynamicBullets:
               type: boolean
               label: Dynamic pagination bullets
             clickable:
               type: boolean
               label: Bullets clickable
+
+#            bullets:
+#              type: mapping
+#              label: Bullets config
+#              mapping:
+#                dynamicBullets:
+#                  type: boolean
+#                  label: Dynamic pagination bullets
+#                clickable:
+#                  type: boolean
+#                  label: Bullets clickable
         scrollbar:
           type: mapping
           label: Scrollbar settings
@@ -146,6 +175,15 @@ swiper_formatter.swiper_formatter.*:
             snapOnRelease:
               type: boolean
               label: Snap slider position to slides on release
+
+        breakpoints:
+          type: sequence
+          label: Breakpoints
+          sequence:
+            -
+              breakpoint: string
+              swiper_template: string
+              weight: integer
         lazy:
           type: mapping
           label: Navigation settings
