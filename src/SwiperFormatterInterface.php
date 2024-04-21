@@ -16,7 +16,7 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
    *
    * @var array
    */
-  const array SWIPER_MODULES = [
+  const SWIPER_MODULES = [
     'navigation',
     'pagination',
     'scrollbar',
@@ -29,7 +29,7 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
    *
    * @var array
    */
-  const array BREAKPOINT_OPTIONS = [
+  const BREAKPOINT_OPTIONS = [
     'slidesPerView',
     'spaceBetween',
     'navigation',
