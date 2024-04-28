@@ -41,7 +41,7 @@
 
               if (swipers[swiperContainer.id]) {
                 // A special care for dynamic and/or clickable bullets.
-                swipers[swiperContainer.id].on('_beforeBreakpoint', (swiperEvent, breakpointParams) => {
+                swipers[swiperContainer.id].on('breakpoint', (swiperEvent, breakpointParams) => {
                   self.breakpointPagination(swiperEvent, breakpointParams);
                 });
 
