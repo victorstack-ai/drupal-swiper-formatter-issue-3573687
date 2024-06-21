@@ -184,8 +184,7 @@ class SwiperFormatterStyle extends StylePluginBase {
 
           foreach ($fields as $field) {
             /** @var \Drupal\views\Plugin\views\field\EntityField $field */
-            if ($field->options['type'] == 'image') {
-
+            if (isset($field->options['type']) && $field->options['type'] == 'image') {
               if (isset($field->options['settings']['image_style']) && !empty($field->options['settings']['image_style'])) {
                 $this->options['image_style'] = $field->options['settings']['image_style'];
               }
