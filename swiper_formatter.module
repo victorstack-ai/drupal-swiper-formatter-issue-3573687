@@ -144,6 +144,8 @@ function swiper_formatter_theme_suggestions_swiper_formatter(array $variables): 
     }
   }
 
+  $suggestions[] = 'swiper_formatter__' . $variables['settings']['template'];
+
   return $suggestions;
 }
 
