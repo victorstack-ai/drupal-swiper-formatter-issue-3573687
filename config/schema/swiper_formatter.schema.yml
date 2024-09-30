@@ -71,7 +71,7 @@ swiper_formatter.swiper_formatter.*:
               type: integer
               label: Duration in ms of transition between slides
             slidesPerView:
-              type: integer
+              type: float
               label: Number of slides per view
             spaceBetween:
               type: integer

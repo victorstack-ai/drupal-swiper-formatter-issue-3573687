@@ -7,11 +7,13 @@ namespace Drupal\swiper_formatter\Form;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\SortArray;
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\swiper_formatter\SwiperFormatterInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A Swiper entity form.
@@ -19,6 +21,32 @@ use Drupal\swiper_formatter\SwiperFormatterInterface;
  * @property \Drupal\swiper_formatter\Entity\SwiperFormatter $entity
  */
 class SwiperFormatterForm extends EntityForm {
+
+  /**
+   * The typed config manager.
+   *
+   * @var \Drupal\Core\Config\TypedConfigManagerInterface
+   */
+  protected $typedConfigManager;
+
+  /**
+   * Constructs a new SwiperFormatterForm.
+   *
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typedConfigManager
+   *   The typed config manager.
+   */
+  public function __construct(TypedConfigManagerInterface $typedConfigManager) {
+    $this->typedConfigManager = $typedConfigManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.typed')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -323,7 +351,8 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['slides']['slidesPerView'] = [
       '#title' => $this->t('Number of slides per view'),
       '#type' => 'number',
-      '#description' => $this->t("Integer value - slides visible at the same time on slider's container."),
+      '#step' => '0.5',
+      '#description' => $this->t("Decimal value - slides visible at the same time on slider's container."),
       '#default_value' => $default_values['slidesPerView'],
     ];
 
@@ -842,6 +871,7 @@ class SwiperFormatterForm extends EntityForm {
                 // Process some special form elements, in order to
                 // have the values fit to Swipers values types.
                 $element = $form[$key][$option][$sub_option];
+                $element['#swiper_id'] = $form['id']['#value'];
                 if (is_array($element) && !empty($sub_value)) {
                   $this->elementsHandler($element, $sub_value);
                 }
@@ -978,12 +1008,54 @@ class SwiperFormatterForm extends EntityForm {
       }
     }
     elseif ($element['#type'] == 'number') {
-      $value = empty($value) ? NULL : (int) $value;
+      $value = NULL;
+      if (!empty($value)) {
+        // Get the config schema mapping to determine the element's data type.
+        $type = 'integer';
+        $swiper_id = $element['#swiper_id'];
+        $config = $this->configFactory()->getEditable('swiper_formatter.swiper_formatter.' . $swiper_id);
+        $typedConfigManager = $this->typedConfigManager->getDefinition($config->getName());
+        $mapping = $typedConfigManager['mapping'];
+        $keys = $element['#parents'];
+        $type = $this->resolveType($mapping, $keys);
+
+        if ($type === 'integer') {
+          $value = (int) $value;
+        }
+        elseif ($type === 'float') {
+          $value = (float) $value;
+        }
+      }
     }
     // NULL any other empty values.
     else {
       $value = empty($value) ? NULL : $value;
     }
+  }
+
+  /**
+   * Recursively resolve the type for a given set of keys.
+   *
+   * @param array $mapping
+   *   The type mapping array.
+   * @param array $keys
+   *   The keys to resolve.
+   *
+   * @return mixed
+   *   The resolved type, or FALSE if not found.
+   */
+  protected function resolveType(array $mapping, array $keys): mixed {
+    $current = array_shift($keys);
+
+    if (isset($mapping[$current])) {
+      if ($mapping[$current]['type'] === 'mapping' && is_array($mapping[$current]['mapping']) && $keys) {
+        return $this->resolveType($mapping[$current]['mapping'], $keys);
+      }
+
+      return $mapping[$current]['type'] ?: FALSE;
+    }
+
+    return FALSE;
   }
 
   /**

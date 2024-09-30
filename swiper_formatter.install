@@ -135,3 +135,37 @@ function swiper_formatter_update_8001(array &$sandbox): void {
   $config_default->save();
 
 }
+
+/**
+ * Updates "slidesPerView" data type, from integer to float.
+ */
+function swiper_formatter_update_8002(array &$sandbox): void {
+  $default_options = [
+    'slidesPerView' => (float) 1,
+  ];
+
+  // Update all existing Swipers.
+  $swipers = SwiperFormatter::getSwipers();
+  if (!empty($swipers)) {
+    $options = $default_options;
+    foreach (array_keys($swipers) as $swiper_id) {
+      $config = \Drupal::service('config.factory')->getEditable('swiper_formatter.swiper_formatter.' . $swiper_id);
+
+      // Get the current value of slidesPerView, and cast to float if it exists.
+      if (isset($config->get('swiper_options')['slidesPerView'])) {
+        $options['slidesPerView'] = (float) $config->get('swiper_options')['slidesPerView'];
+      }
+
+      $swiper_options = array_merge($config->get('swiper_options'), $options);
+      $config->set('swiper_options', $swiper_options);
+      $config->save();
+    }
+  }
+
+  // Save default settings file.
+  $config_default = \Drupal::service('config.factory')->getEditable('swiper_formatter.settings');
+  foreach ($default_options as $option_key => $option) {
+    $config_default->set($option_key, $option);
+  }
+  $config_default->save();
+}
