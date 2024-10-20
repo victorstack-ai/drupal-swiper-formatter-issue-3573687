@@ -13,17 +13,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Plugin implementation of the 'Swiper Dialog images' formatter.
  *
  * @FieldFormatter(
- *   id = "swiper_formatter_entity_dialog",
- *   label = @Translation("Swiper entity Dialog"),
+ *   id = "swiper_formatter_paragraphs_dialog",
+ *   label = @Translation("Swiper paragraphs Dialog"),
  *   field_types = {
- *     "entity_reference",
+ *     "entity_reference_revisions"
  *   },
  *   quickedit = {
  *     "editor" = "form"
  *   }
  * )
  */
-class SwiperEntityDialog extends SwiperEntity {
+class SwiperParagraphsDialog extends SwiperParagraphs {
 
   /**
    * Swiper formatter base service.
@@ -53,7 +53,6 @@ class SwiperEntityDialog extends SwiperEntity {
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $elements = parent::settingsForm($form, $form_state);
-
     $entity_type = $this->fieldDefinition->getTargetEntityTypeId();
     $entity_bundle = $this->fieldDefinition->getTargetBundle();
     $options = $this->entityDisplayRepository->getViewModeOptionsByBundle($entity_type, $entity_bundle);

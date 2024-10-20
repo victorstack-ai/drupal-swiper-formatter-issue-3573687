@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\swiper_formatter\Form;
 
-
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Config\TypedConfigManagerInterface;
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformStateInterface;
 use Drupal\Core\Render\Element;
@@ -33,8 +32,12 @@ class SwiperFormatterForm extends EntityForm {
    */
   protected TypedConfigManagerInterface $typedConfigManager;
 
-  protected $entityTypeManager;
-
+  /**
+   * Swiper formatter entity storage.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  public EntityStorageInterface $swiperStorage;
 
   /**
    * Available Swiper modules.
@@ -49,26 +52,19 @@ class SwiperFormatterForm extends EntityForm {
   ];
 
   /**
-   * Constructs a new SwiperFormatterForm.
-   *
-   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typedConfigManager
-   *   The typed config manager.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   Entity type manager.
-   */
-  public function __construct(TypedConfigManagerInterface $typedConfigManager, EntityTypeManagerInterface $entity_type_manager) {
-    $this->typedConfigManager = $typedConfigManager;
-    $this->entityTypeManager = $entity_type_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container): static {
-    return new static(
-      $container->get('config.typed'),
-      $container->get('entity_type.manager')
-    );
+  public static function create(ContainerInterface $container): self {
+    $instance = parent::create($container);
+    $instance->typedConfigManager = $container->get('config.typed');
+    try {
+      $instance->swiperStorage = $container->get('entity_type.manager')
+        ->getStorage('swiper_formatter');
+    }
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      $instance->messenger()->addError($e->getMessage());
+    }
+    return $instance;
   }
 
   /**
@@ -1009,14 +1005,7 @@ class SwiperFormatterForm extends EntityForm {
    *   True if swiper entity exists.
    */
   public function exist(string $id): bool {
-    try {
-      return (bool) $this->entityTypeManager->getStorage('swiper_formatter')
-        ->load($id);
-    }
-    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
-      $this->logger('Swiper formatter')->error($e->getMessage());
-    }
-    return FALSE;
+    return (bool) $this->swiperStorage->load($id);
   }
 
   /**
@@ -1285,8 +1274,7 @@ class SwiperFormatterForm extends EntityForm {
 
               if ($child_key == 'swiper_template') {
                 $swiper_template_id = $default_values[$index][$child_key];
-                $breakpoints_value = $swiper_template_id ? $this->entityTypeManager->getStorage('swiper_formatter')
-                  ->load($swiper_template_id) : NULL;
+                $breakpoints_value = $swiper_template_id ? $this->swiperStorage->load($swiper_template_id) : NULL;
               }
               else {
                 $breakpoints_value = $default_values[$index][$child_key];

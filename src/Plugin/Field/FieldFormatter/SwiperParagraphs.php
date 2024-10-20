@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter;
+use Drupal\entity_reference_revisions\Plugin\Field\FieldFormatter\EntityReferenceRevisionsEntityFormatter;
 use Drupal\swiper_formatter\Service\SwiperInterface;
 use Drupal\swiper_formatter\SwiperFormatterTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Plugin implementation of the 'swiper_formatter_text' formatter variant.
+ * Plugin implementation of the 'Swiper Formatter Paragraphs' formatter.
  *
  * @FieldFormatter(
- *   id = "swiper_formatter_entity",
- *   label = @Translation("Swiper entity"),
+ *   id = "swiper_formatter_paragraphs",
+ *   label = @Translation("Swiper Paragraphs"),
  *   field_types = {
- *     "entity_reference",
+ *     "entity_reference_revisions"
  *   },
  *   quickedit = {
  *     "editor" = "form"
@@ -25,7 +25,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  * @phpstan-consistent-constructor
  */
-class SwiperEntity extends EntityReferenceEntityFormatter {
+class SwiperParagraphs extends EntityReferenceRevisionsEntityFormatter {
+
+  use SwiperFormatterTrait;
 
   use SwiperFormatterTrait;
 
