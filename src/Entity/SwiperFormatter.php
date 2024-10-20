@@ -83,7 +83,7 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
   protected bool $breakpoint = FALSE;
 
   /**
-   * A collection of all of the Swiper's properties into a single array.
+   * Collect all the Swiper's properties into a single array.
    *
    * @var array
    */
@@ -112,7 +112,7 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
   /**
    * {@inheritdoc}
    */
-  public function setSwiper(array $swiper_options = []): SwiperFormatterInterface {
+  public function setSwiper(array $swiper_options = []): self {
     $this->swiper_options = $swiper_options;
     return $this;
   }

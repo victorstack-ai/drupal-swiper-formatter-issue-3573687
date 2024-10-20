@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\swiper_formatter\Plugin\views\style;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\swiper_formatter\Service\SwiperInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -39,21 +43,26 @@ class SwiperFormatterStyle extends StylePluginBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
+    protected AccountInterface $currentUser,
     protected EntityFieldManagerInterface $entityFieldManager,
-    protected EntityTypeManagerInterface $entityTypeManager) {
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected SwiperInterface $swiperBase,
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): SwiperFormatterStyle {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('current_user'),
       $container->get('entity_field.manager'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('swiper_formatter.base')
     );
   }
 
@@ -65,9 +74,9 @@ class SwiperFormatterStyle extends StylePluginBase {
     $options['template'] = ['default' => 'default'];
     $options['caption'] = ['default' => NULL];
 
-    // Ensure unique id attribute for each instance
+    // Ensure a unique id attribute for each instance
     // of Swiper on the same page.
-    // User can change this on settings but we try to
+    // User can change this on settings, but we try to
     // make sure some unique id is auto assigned.
     $view_id = $this->view->id();
     $current_display = $this->view->current_display;
@@ -78,6 +87,8 @@ class SwiperFormatterStyle extends StylePluginBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @phpstan-ignore-next-line
    */
   public function buildOptionsForm(&$form, FormStateInterface $form_state): void {
     parent::buildOptionsForm($form, $form_state);
@@ -87,10 +98,9 @@ class SwiperFormatterStyle extends StylePluginBase {
       '#title' => $this->t('Swiper formatter settings'),
     ];
 
-    $swiper_storage = $this->entityTypeManager->getStorage('swiper_formatter');
-    if ($loaded = $swiper_storage->load($this->options['template'])) {
-      /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $loaded */
-      $this->options += $loaded->get('swiper_options');
+    if ($swiper_entity = $this->swiperBase->getSwiper($this->options['template'])) {
+      /** @var \Drupal\swiper_formatter\SwiperFormatterInterface $swiper_entity */
+      $this->options += $swiper_entity->get('swiper_options');
     }
 
     $form['swiper']['swiper_el'] = [
@@ -101,10 +111,13 @@ class SwiperFormatterStyle extends StylePluginBase {
         'name' => 'views',
         'template' => $this->options['template'],
         'settings' => $this->options,
+        'custom_link' => $this->options['custom_link'] ?? NULL,
+        'entity_type' => 'default',
+        'swiper_access' => $this->currentUser->hasPermission('administer swiper'),
       ],
     ];
 
-    // $this->view->initStyle();
+    /* $this->view->initStyle(); */
     if ($this->usesFields()) {
 
       $fields = (array) $this->view->style_plugin->displayHandler->handlers['field'];
@@ -138,9 +151,9 @@ class SwiperFormatterStyle extends StylePluginBase {
       $form['swiper']['swiper_el']['#default_value']['caption'] = [
         'value' => $this->options['caption'],
         'entity_fields' => $entity_fields,
+        'field_edit_url' => NULL,
       ];
     }
-
   }
 
   /**
@@ -169,19 +182,16 @@ class SwiperFormatterStyle extends StylePluginBase {
     if (!isset($this->options['template']) || empty($this->options['template']) || empty($sets)) {
       return $output;
     }
+    if ($swiper_entity = $this->swiperBase->getSwiper($this->options['template'])) {
+      /** @var \Drupal\swiper_formatter\SwiperFormatterInterface $swiper_entity */
 
-    $swiper_storage = $this->entityTypeManager->getStorage('swiper_formatter');
-    if ($loaded = $swiper_storage->load($this->options['template'])) {
-      /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface $loaded */
-      $this->options += $loaded->get('swiper_options');
+      $this->options += $swiper_entity->get('swiper_options');
       $this->options['field_type'] = 'views';
-
       $this->options['is_image'] = FALSE;
 
       if ($this->usesFields()) {
         $fields = (array) $this->view->style_plugin->displayHandler->handlers['field'];
         if (count($fields) == 1 || count($fields) == 2) {
-
           foreach ($fields as $field) {
             /** @var \Drupal\views\Plugin\views\field\EntityField $field */
             if (isset($field->options['type']) && $field->options['type'] == 'image') {
@@ -219,7 +229,7 @@ class SwiperFormatterStyle extends StylePluginBase {
             $entity = $row['#' . $row['#entity_type']] ?? NULL;
           }
 
-          // Take care of caption.
+          // Take care of the caption.
           if (is_object($entity) && isset($this->options['caption']) && !empty($this->options['caption'])) {
             $image_subfields = ['alt', 'title'];
             if ($this->options['is_image'] && in_array($this->options['caption'], $image_subfields)) {
@@ -260,6 +270,8 @@ class SwiperFormatterStyle extends StylePluginBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @phpstan-ignore-next-line
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state): void {
     parent::submitOptionsForm($form, $form_state);
@@ -295,7 +307,7 @@ class SwiperFormatterStyle extends StylePluginBase {
    * @param array $field_values
    *   An array of field values returned by its parent entity.
    *
-   * @return string|null
+   * @return null|string
    *   Either a raw caption string (to be rendered),
    *   or url of image field (for lazy loading feature).
    */
@@ -318,7 +330,7 @@ class SwiperFormatterStyle extends StylePluginBase {
       elseif ($type == 'background') {
         // Lazy load support.
         if ($this->options['is_image'] && $this->options['lazy']['enabled']) {
-          $values = $this->lazyLoad($index, $delta, $field_values);
+          $values = $this->lazyLoad($index, $field_values);
         }
       }
       $index++;
@@ -331,22 +343,26 @@ class SwiperFormatterStyle extends StylePluginBase {
    *
    * @param int $index
    *   Custom index.
-   * @param int $delta
-   *   Default index/delta returned from a view render.
    * @param array $field_values
    *   An array of field values returned by its parent entity.
    *
-   * @return string|null
+   * @return null|string
    *   A path or url of the image to set as data attribute,
-   *   for Lazy loading Swiper feature. It resepects selected image style.
+   *   for Lazy loading Swiper feature. It respects selected image style.
    */
-  protected function lazyLoad(int $index, int $delta, array $field_values): string|NULL {
+  protected function lazyLoad(int $index, array $field_values): string|NULL {
     $background = NULL;
     $image_target_id = $field_values[$index]['target_id'] ?? NULL;
     if ($image_target_id) {
-      if ($file = $this->entityTypeManager->getStorage('file')->load($image_target_id)) {
+      /** @var \Drupal\file\FileStorageInterface $file_storage */
+      $file_storage = $this->entityTypeManager->getStorage('file');
+      if ($file = $file_storage->load($image_target_id)) {
+        /** @var \Drupal\file\FileInterface $file */
         if (isset($this->options['image_style']) && !empty($this->options['image_style'])) {
-          $image_style = $this->entityTypeManager->getStorage('image_style')->load($this->options['image_style']);
+          /** @var \Drupal\image\ImageStyleStorageInterface $image_style_storage */
+          $image_style_storage = $this->entityTypeManager->getStorage('image_style');
+          /** @var \Drupal\image\ImageStyleInterface $image_style */
+          $image_style = $image_style_storage->load($this->options['image_style']);
           $background = $image_style->buildUrl($file->getFileUri());
         }
         // No Image style set (bad :)

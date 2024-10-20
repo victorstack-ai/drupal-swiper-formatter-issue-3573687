@@ -10,11 +10,12 @@
       "role": "Maintainer"
     }
   ],
-    
+
   "license": "GPL-2.0-or-later",
   "minimum-stability": "dev",
   "require": {
-    "drupal/core": "^10 || ^11"
+    "drupal/core": "^10.3 || ^11",
+    "php": ">=8.3"
   },
   "support": {
     "issues": "https://www.drupal.org/project/issues/swiper_formatter",

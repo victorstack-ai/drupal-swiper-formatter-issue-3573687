@@ -29,3 +29,14 @@ entity.swiper_formatter.delete_form:
     _title: 'Delete Swiper'
   requirements:
     _permission: 'administer swiper_formatter'
+
+swiper_formatter.dialog:
+  path: /swiper-formatter/{entity_type}/{entity_id}/{view_mode}/{field}/{delta}/{field_item}
+  defaults:
+    _controller: '\Drupal\swiper_formatter\Controller\Dialog::dialog'
+    _title_callback: '\Drupal\swiper_formatter\Controller\Dialog::title'
+    field: 'none'
+    delta: '0'
+    field_item: 0
+  requirements:
+    _permission: 'access content'

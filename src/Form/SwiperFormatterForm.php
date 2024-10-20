@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\swiper_formatter\Form;
 
+
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformStateInterface;
 use Drupal\Core\Render\Element;
@@ -27,24 +31,43 @@ class SwiperFormatterForm extends EntityForm {
    *
    * @var \Drupal\Core\Config\TypedConfigManagerInterface
    */
-  protected $typedConfigManager;
+  protected TypedConfigManagerInterface $typedConfigManager;
+
+  protected $entityTypeManager;
+
+
+  /**
+   * Available Swiper modules.
+   *
+   * @var array
+   */
+  public const array SWIPER_MODULES = [
+    'navigation',
+    'pagination',
+    'autoplay',
+    'lazy',
+  ];
 
   /**
    * Constructs a new SwiperFormatterForm.
    *
    * @param \Drupal\Core\Config\TypedConfigManagerInterface $typedConfigManager
    *   The typed config manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager.
    */
-  public function __construct(TypedConfigManagerInterface $typedConfigManager) {
+  public function __construct(TypedConfigManagerInterface $typedConfigManager, EntityTypeManagerInterface $entity_type_manager) {
     $this->typedConfigManager = $typedConfigManager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('config.typed')
+      $container->get('config.typed'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -56,7 +79,9 @@ class SwiperFormatterForm extends EntityForm {
     $form = parent::form($form, $form_state);
 
     $default_setting = $this->config('swiper_formatter.settings')->getRawData();
-    $default_values = array_merge($default_setting, $this->entity->swiper_options);
+    /** @var \Drupal\swiper_formatter\Entity\SwiperFormatter $swiper_entity */
+    $swiper_entity = $this->entity;
+    $default_values = array_merge($default_setting, $swiper_entity->swiper_options);
 
     $form['label'] = [
       '#type' => 'textfield',
@@ -498,7 +523,6 @@ class SwiperFormatterForm extends EntityForm {
       '#title' => $this->t('Delay in ms'),
       '#default_value' => $default_values['autoplay']['delay'],
       '#description' => $this->t('Set amount of milliseconds after which Swiper will automatically swipe to the next slide.'),
-      // @see https://www.drupal.org/docs/8/api/form-api/conditional-form-fields
       '#states' => [
         'visible' => [
           ':input[name="swiper_options[autoplay][enabled]"]' => ['checked' => TRUE],
@@ -851,7 +875,7 @@ class SwiperFormatterForm extends EntityForm {
               $element = $form['swiper_options'][$key][$option] ?? [];
               $value = $this->saveSequence($value);
 
-              // Process some special form elements, in order to
+              // Process some special form elements, to
               // have the values fit to Swipers values types.
               if (!empty($element) && !empty($value)) {
                 $this->elementsHandler($element, $value);
@@ -908,13 +932,13 @@ class SwiperFormatterForm extends EntityForm {
       ]));
     }
 
-    // Go back to a page with collection of Swiper entities.
+    // Go back to a page with a collection of Swiper entities.
     $form_state->setRedirect('entity.swiper_formatter.collection');
     return $saved;
   }
 
   /**
-   * These are multiple fields (e.g. table), sequences such as Breakpoints.
+   * These are multiple fields (e.g., table), sequences such as Breakpoints.
    *
    * @param array $values
    *   An array with form state values of "breakpoints" table element.
@@ -976,7 +1000,7 @@ class SwiperFormatterForm extends EntityForm {
   }
 
   /**
-   * Check whether an swiper configuration entity exists.
+   * Check whether if swiper configuration entity exists.
    *
    * @param string $id
    *   Swiper config entity ID property.
@@ -985,13 +1009,20 @@ class SwiperFormatterForm extends EntityForm {
    *   True if swiper entity exists.
    */
   public function exist(string $id): bool {
-    return (bool) $this->entityTypeManager->getStorage('swiper_formatter')->load($id);
+    try {
+      return (bool) $this->entityTypeManager->getStorage('swiper_formatter')
+        ->load($id);
+    }
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      $this->logger('Swiper formatter')->error($e->getMessage());
+    }
+    return FALSE;
   }
 
   /**
    * Process some special form elements.
    *
-   * Basically place some values up to fit to Swiper settings object structure.
+   * Place some values up to fit to Swiper settings object structure.
    *
    * @param array $element
    *   Form element.
@@ -1000,18 +1031,16 @@ class SwiperFormatterForm extends EntityForm {
    */
   protected function elementsHandler(array $element, mixed &$value): void {
     if ($element['#type'] == 'checkbox') {
-      if ($value == 0) {
+      if ($value === 0) {
         $value = FALSE;
       }
-      if ($value == 1) {
+      if ($value === 1) {
         $value = TRUE;
       }
     }
     elseif ($element['#type'] == 'number') {
-      $value = NULL;
       if (!empty($value)) {
         // Get the config schema mapping to determine the element's data type.
-        $type = 'integer';
         $swiper_id = $element['#swiper_id'];
         $config = $this->configFactory()->getEditable('swiper_formatter.swiper_formatter.' . $swiper_id);
         $typedConfigManager = $this->typedConfigManager->getDefinition($config->getName());

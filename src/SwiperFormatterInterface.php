@@ -12,11 +12,18 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 interface SwiperFormatterInterface extends ConfigEntityInterface {
 
   /**
+   * The machine name of the default swiper entity/template.
+   *
+   * @var string
+   */
+  public const string DEFAULT_TEMPLATE = 'default';
+
+  /**
    * Default Swiper's modules.
    *
    * @var array
    */
-  const SWIPER_MODULES = [
+  public const array SWIPER_MODULES = [
     'navigation',
     'pagination',
     'scrollbar',
@@ -29,7 +36,7 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
    *
    * @var array
    */
-  const BREAKPOINT_OPTIONS = [
+  public const array BREAKPOINT_OPTIONS = [
     'slidesPerView',
     'spaceBetween',
     'navigation',
@@ -37,10 +44,10 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
   ];
 
   /**
-   * Returns an array with all of the properties that are Swiper.js options.
+   * Returns an array with all the properties that are Swiper.js options.
    *
    * @param bool $check_breakpoint
-   *   When true check on breakpoint templates.
+   *   When true, check on breakpoint templates.
    *
    * @return array
    *   An array with swiper options, keyed by entity id.
@@ -48,7 +55,7 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
   public static function getSwipers(bool $check_breakpoint = FALSE): array;
 
   /**
-   * Sets all the properties that are Swiper.js options into an array.
+   * Sets swiper_options property to deliver later to Swiper in js, as options.
    *
    * @param array $swiper_options
    *   Swiper template options to set to entity.

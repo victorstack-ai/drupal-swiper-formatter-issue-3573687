@@ -18,17 +18,21 @@
 {% apply spaceless %}
   <div{{ attributes }}>
     {% if background %}
-    
       {% if slide_url %}
         <a href="{{ slide_url }}"><img data-src="{{ background }}" class="swiper-lazy" /></a>
       {% else %}
-        <img data-src="{{ background }}" class="swiper-lazy" /> 
+        <img data-src="{{ background }}" class="swiper-lazy" />
       {% endif %}
       <div class="swiper-lazy-preloader"></div>
-    {% else %}   
-      {{ slide }}        
+    {% else %}
+      {# Dialog formatter link.#}
+      {% if dialog_attributes %}
+        <a{{ dialog_attributes }}>{{ slide }}</a>
+      {# Regular slide. #}
+      {% else %}
+        {{ slide }}
+      {%  endif %}
     {% endif %}
-      
     {% if caption %}
       <div class="swiper-caption">
         {{ caption }}

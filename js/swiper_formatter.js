@@ -12,7 +12,7 @@
    /**
     * Drupal.behaviors implementation for Swiper formatter.
     *
-    * Register and initialise all Swiper instances on the page.
+    * Register and initialize all Swiper instances on the page.
     */
    Drupal.behaviors.nkToolsSwiper = {
 
@@ -31,7 +31,7 @@
 	        if (swiperContainer.id) {
             const swiperSettings = swiper_formatter_settings.swipers[swiperContainer.id];
             if (typeof swiperSettings === 'object' && typeof Swiper !== 'undefined') {
-	
+
               if (swiperSettings.pagination.type === 'progressbar') {
 	              swiperContainer.classList.add('progressbar');
               }
@@ -51,14 +51,17 @@
                   self.registerTriggers(swipers[swiperContainer.id], Array.from(triggers));
                 }
               }
+
+              // Add swipers site-wide via drupalSettings.
+              drupalSettings.swipers = swipers;
 	          }
 	        }
-	      });    
+	      });
       }
     },
 
     /**
-      * Handle breakpoints pagination classes on window resize.
+      * Handle breakpoint pagination classes on window resize.
       *
       * @param {Object} swiperEvent
       *  Current Swiper "_beforeBreakpoint" event object.
@@ -82,7 +85,7 @@
             if (clickableBullets) {
               paginationWrapper.classList.remove('swiper-pagination-clickable');
             }
-            // Take care of style="width:" calculated value for dynamic bullets.
+            // Take care of style="width": calculated value for dynamic bullets.
             if (paginationWrapper.getAttribute('style')) {
               let styles = paginationWrapper.getAttribute('style').split(';');
 
@@ -143,7 +146,7 @@
           swiper.slideTo(index);
           return false;
         });
-      });   
+      });
     }
   };
 
