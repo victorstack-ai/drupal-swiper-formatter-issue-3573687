@@ -53,7 +53,7 @@
               }
 
               // Add swipers site-wide via drupalSettings.
-              drupalSettings.swipers = swipers;
+              settings.swipers = swipers;
 	          }
 	        }
 	      });
