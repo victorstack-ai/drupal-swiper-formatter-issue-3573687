@@ -22,7 +22,7 @@ swiper_formatter.swiper_formatter.*:
       label: Swiper library source
     swiper_options:
       type: mapping
-      mapping: 
+      mapping:
         wrapper:
           autoHeight:
             type: boolean
@@ -101,17 +101,17 @@ swiper_formatter.swiper_formatter.*:
         navigation:
           type: mapping
           label: Navigation settings
-          mapping: 
+          mapping:
             enabled:
               type: boolean
               label: Enable/disable navigation
-            hideOnClick: 
+            hideOnClick:
               type: boolean
               label: Toggle visibility after click on Swiper container
         pagination:
           type: mapping
           label: Pagination settings
-          mapping: 
+          mapping:
             enabled:
               type: boolean
               label: Enable/disable pagination
@@ -127,7 +127,7 @@ swiper_formatter.swiper_formatter.*:
         lazy:
           type: mapping
           label: Navigation settings
-          mapping: 
+          mapping:
             enabled:
               type: boolean
               label: Enable/disable lazy load
@@ -145,4 +145,99 @@ swiper_formatter.swiper_formatter.*:
               label: Amount of next and prev slides to preload lazy images in
             scrollingElement:
               type: string
-              label: CSS selector for element to check scrolling on for checkInView              
+              label: CSS selector for element to check scrolling on for checkInView
+
+# Field formatter settings.
+swiper_formatter_dialog:
+  dialog_target:
+    type: string
+    label: 'Dialog target entity'
+  dialog_view_mode:
+    type: string
+    label: 'Dialog view mode'
+  dialog_view_item:
+    type: string
+    label: 'Dialog view item'
+  dialog_type:
+    type: string
+    label: 'Dialog type'
+  dialog_title_hide:
+    type: boolean
+    label: 'Hide title'
+  dialog_title:
+    type: string
+    label: 'Dialog title'
+  dialog_autoresize:
+    type: boolean
+    label: 'Dialog auto resize'
+  dialog_width:
+    type: string
+    label: 'Dialog width'
+  dialog_height:
+    type: string
+    label: 'Dialog height'
+  'ui-dialog':
+    type: string
+    label: 'UI dialog class'
+  'ui-dialog-titlebar':
+    type: string
+    label: 'UI dialog title bar class'
+  'ui-dialog-title':
+    type: string
+    label: 'UI dialog title class'
+  'ui-dialog-titlebar-close':
+    type: string
+    label: 'UI dialog close class'
+  'ui-dialog-content':
+    type: string
+    label: 'UI dialog content class'
+
+field.formatter.settings.swiper_formatter_entity:
+  type: field.formatter.settings.entity_reference_revisions_entity_view
+  label: 'Swiper entity formatter settings'
+  mapping:
+    template:
+      type: string
+      label: 'Swiper template'
+    caption:
+      type: string
+      label: 'Caption field'
+field.formatter.settings.swiper_formatter_entity_dialog:
+  type: field.formatter.settings.swiper_formatter_entity
+  label: 'Swiper dialog entity formatter settings'
+  mapping: swiper_formatter_dialog
+
+field.formatter.settings.swiper_formatter_image:
+  type: field.formatter.settings.image
+  label: 'Swiper images formatter settings'
+  mapping:
+    template:
+      type: string
+      label: 'Swiper template'
+    caption:
+      type: string
+      label: 'Caption field'
+    custom_link:
+      type: string
+      label: 'Image link'
+
+field.formatter.settings.swiper_formatter_image_dialog:
+  type: field.formatter.settings.swiper_formatter_image
+  label: 'Swiper dialog images formatter settings'
+  mapping: swiper_formatter_dialog
+
+field.formatter.swiper_formatter_text:
+  type: field.formatter.settings.text_trimmed
+  label: 'Swiper text formatter settings'
+  mapping:
+    template:
+      type: string
+      label: 'Swiper template'
+    caption:
+      type: string
+      label: 'Caption field'
+
+field.formatter.settings.swiper_formatter_text_dialog:
+  type: field.formatter.swiper_formatter_text
+  label: 'Swiper dialog text formatter settings'
+  mapping: swiper_formatter_dialog

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\swiper_formatter;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -10,13 +12,29 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 interface SwiperFormatterInterface extends ConfigEntityInterface {
 
   /**
-   * Returns an array with all of the properties that are Swiper.js options.
+   * The machine name of the default swiper entity/template.
+   *
+   * @var string
    */
-  public static function getSwipers();
+  public const DEFAULT_TEMPLATE = 'default';
 
   /**
-   * Sets all of the properties that are Swiper.js options into an array.
+   * Returns an array with all properties that are Swiper options.
+   *
+   * @return array
+   *   An array with all available Swiper entities/templates keyed by entity id.
    */
-  public function setSwiper(array $swiper_options = []);
+  public static function getSwipers(): array;
+
+  /**
+   * Sets swiper_options property to deliver later to Swiper in js, as options.
+   *
+   * @param array $swiper_options
+   *   An array of options to assign to property.
+   *
+   * @return self
+   *   The actual class.
+   */
+  public function setSwiper(array $swiper_options = []): self;
 
 }

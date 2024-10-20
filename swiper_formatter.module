@@ -2,13 +2,17 @@
 
 /**
  * @file
- * swiper_formatter.module
+ * Swiper formatter module.
  */
+
+declare(strict_types=1);
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutable;
@@ -16,7 +20,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_help().
  */
-function swiper_formatter_help($route_name, RouteMatchInterface $route_match) {
+function swiper_formatter_help(string $route_name, RouteMatchInterface $route_match): string|TranslatableMarkup {
   switch ($route_name) {
 
     case 'help.page.swiper_formatter':
@@ -52,12 +56,13 @@ and there can be unlimited number of these, each ready as a sort of pre-defined 
     case 'entity.swiper_formatter.delete_form':
       return t('Make sure to double check on Field formatter settings (Manage display) as well as any Views that are using this particular Swiper style.');
   }
+  return '';
 }
 
 /**
  * Implements hook_theme().
  */
-function swiper_formatter_theme() {
+function swiper_formatter_theme(): array {
 
   return [
     'swiper_formatter' => [
@@ -77,6 +82,15 @@ function swiper_formatter_theme() {
       ],
     ],
 
+    // Swiper modal.
+    'swiper_dialog' => [
+      'variables' => [
+        'id' => NULL,
+        'content' => NULL,
+        'entity' => NULL,
+      ],
+    ],
+
     // Swiper slide item.
     'swiper_formatter_slide' => [
       'variables' => [
@@ -85,6 +99,7 @@ function swiper_formatter_theme() {
         'background' => NULL,
         'caption' => NULL,
         'slide_url' => NULL,
+        'dialog_attributes' => NULL,
         'attributes' => [],
         'settings' => [],
       ],
@@ -95,7 +110,7 @@ function swiper_formatter_theme() {
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function swiper_formatter_theme_suggestions_swiper_formatter(array $variables) {
+function swiper_formatter_theme_suggestions_swiper_formatter(array $variables): array {
 
   $suggestions = [];
 
@@ -138,13 +153,15 @@ function swiper_formatter_theme_suggestions_swiper_formatter(array $variables) {
     }
   }
 
+  $suggestions[] = 'swiper_formatter__' . $variables['settings']['template'];
+
   return $suggestions;
 }
 
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function swiper_formatter_theme_suggestions_swiper_formatter_slide(array $variables) {
+function swiper_formatter_theme_suggestions_swiper_formatter_slide(array $variables): array {
 
   $suggestions = [];
   // Twig templates based on Swiper view data.
@@ -200,9 +217,28 @@ function swiper_formatter_theme_suggestions_swiper_formatter_slide(array $variab
 }
 
 /**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function swiper_formatter_theme_suggestions_swiper_formatter_view_modes(array $variables): array {
+  $suggestions = [];
+  if ($variables['object'] instanceof ContentEntityInterface) {
+    $suggestions[] = 'swiper_formatter_view_modes__' . $variables['object']->bundle();
+    $suggestions[] = 'swiper_formatter_view_modes__' . $variables['object']->bundle() . '__' . $variables['field_name'];
+  }
+  return $suggestions;
+}
+
+/**
  * Implements template_preprocess_hook().
  */
-function template_preprocess_swiper_formatter(&$variables) {
+function template_preprocess_swiper_formatter(array &$variables): void {
+
+  // Skip swiper format when number of slides less than two.
+  // @see https://www.drupal.org/project/swiper_formatter/issues/3479245.
+  if (count($variables['content']) < 2) {
+    \Drupal::service('messenger')->addWarning(t('The number of slides is less than two, skipping Swiper formatting.'));
+    return;
+  }
 
   $formatter_settings = &$variables['settings'];
 
@@ -218,13 +254,9 @@ function template_preprocess_swiper_formatter(&$variables) {
 
   $variables['content_attributes'] = new Attribute($content_attributes);
 
-  // Navigation handling.
-  $prev_attributes = [];
-  $next_attributes = [];
-
   if ($formatter_settings['navigation']['enabled']) {
 
-    // We need to do these two separately, in order to
+    // We need to do these two separately, to
     // preserve classes for default Swiper styling/CSS.
     $formatter_settings['navigation']['prevEl'] = '.' . $variables['id'] . '-prev';
     $formatter_settings['navigation']['nextEl'] = '.' . $variables['id'] . '-next';
@@ -249,7 +281,6 @@ function template_preprocess_swiper_formatter(&$variables) {
     ];
   }
 
-  $pagination_attributes = [];
   if ($formatter_settings['pagination']['enabled']) {
 
     $formatter_settings['pagination']['el'] = '.pagination-' . $variables['id'];
@@ -266,7 +297,7 @@ function template_preprocess_swiper_formatter(&$variables) {
   foreach ($variables['content'] as &$item) {
 
     // Take care of some caching,
-    // i.e. update if swiper template changed.
+    // i.e., update if swiper template changed.
     $cache_tags = [
       'config:swiper_formatter.swiper_formatter.' . $formatter_settings['template'],
     ];
@@ -279,9 +310,10 @@ function template_preprocess_swiper_formatter(&$variables) {
     }
 
     // Make caption markup, if any.
-    if (isset($item['#caption']) && !empty($item['#caption'])) {
+    if (!empty($item['#caption'])) {
+      $caption_value = is_array($item['#caption']) && isset($item['#caption']['value']) ? $item['#caption']['value'] : $item['#caption'];
       $item['#caption'] = [
-        '#markup' => Markup::create($item['#caption']),
+        '#markup' => Markup::create($caption_value),
       ];
     }
 
@@ -294,9 +326,10 @@ function template_preprocess_swiper_formatter(&$variables) {
       'swiper-slide-' . Html::cleanCssIdentifier($formatter_settings['field_type']),
     ];
 
-    // Add extra cache key to avoid conflict with original view mode cached
-    // version as a workaround to current implementation until the main logic is
-    // reworked. Just in case it's not an entity, we add a check.
+    // Add an extra cache key to avoid conflict with
+    // an original view mode cached version as a workaround to the current
+    // implementation until the main logic is reworked.
+    // Just in case it's not an entity, we add a check.
     $keys = $item['#cache']['keys'] ?? [];
     if (in_array('entity_view', $keys)) {
       $item['#cache']['keys'][] = 'swiper-slide';
@@ -310,7 +343,10 @@ function template_preprocess_swiper_formatter(&$variables) {
     ];
   }
   $variables['#attached']['drupalSettings']['swiper_formatter']['swipers'][$variables['id']] = $formatter_settings;
-
   $variables['#attached']['library'][] = 'swiper_formatter/' . $formatter_settings['source'];
   $variables['#attached']['library'][] = 'swiper_formatter/swiper_formatter';
+  $dialog = $variables['settings']['dialog_type'] ?? NULL;
+  if ($dialog) {
+    $variables['#attached']['library'][] = 'swiper_formatter/dialog';
+  }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\swiper_formatter\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
@@ -7,7 +9,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\swiper_formatter\SwiperFormatterInterface;
 
 /**
- * Defines the Nk tools swiper entity type.
+ * Defines the Swiper entity type.
  *
  * @ConfigEntityType(
  *   id = "swiper_formatter",
@@ -80,16 +82,16 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
   protected $status;
 
   /**
-   * A collection of all of the Swiper's properties into a single array.
+   * Collect all the Swiper's properties into a single array.
    *
    * @var array
    */
   public $swiper_options = [];
 
   /**
-   * Swipers getter.
+   * {@inheritdoc}
    */
-  public static function getSwipers() {
+  public static function getSwipers(): array {
     $swiper_options = [];
     $swipers = static::loadMultiple();
     if (!empty($swipers)) {
@@ -106,23 +108,23 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
   }
 
   /**
-   * Swipers setter.
-   *
-   * @param array $swiper_options
-   *   An array of options to assing to property.
+   * {@inheritdoc}
    */
-  public function setSwiper(array $swiper_options = []) {
+  public function setSwiper(array $swiper_options = []): self {
     $this->swiper_options = $swiper_options;
     return $this;
   }
 
   /**
    * Prepare #options for swiper template options form field.
+   *
+   * @return array
+   *   Array with Swiper entity key-label values.
    */
-  public static function getSwiperTemplates() {
+  public static function getSwiperTemplates(): array {
+    $templates = [];
     $swipers = static::getSwipers();
     if (!empty($swipers)) {
-      $templates = [];
       foreach ($swipers as $id => $swiper) {
         $templates[$id] = $swiper['label'];
       }
