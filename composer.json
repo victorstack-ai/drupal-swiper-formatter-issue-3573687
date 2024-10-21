@@ -15,6 +15,7 @@
   "minimum-stability": "dev",
   "require": {
     "drupal/core": "^10.3 || ^11",
+    "drupal/token": "*",
     "php": ">=8.3"
   },
   "support": {
