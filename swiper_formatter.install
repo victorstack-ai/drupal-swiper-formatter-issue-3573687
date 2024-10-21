@@ -139,7 +139,7 @@ function swiper_formatter_update_8001(array &$sandbox): void {
 /**
  * Updates "slidesPerView" data type, from integer to float.
  */
-function swiper_formatter_update_8002(array &$sandbox): void {
+function swiper_formatter_update_10201(array &$sandbox): void {
   $default_options = [
     'slidesPerView' => (float) 1,
   ];
@@ -173,7 +173,7 @@ function swiper_formatter_update_8002(array &$sandbox): void {
 /**
  * Enable the Token module.
  */
-function swiper_formatter_update_10201() {
+function swiper_formatter_update_10202() {
   /** @var \Drupal\Core\Extension\ModuleInstaller $module_installer */
   $module_installer = \Drupal::service('module_installer');
   $module_installer->install(['token']);
