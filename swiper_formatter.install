@@ -169,3 +169,12 @@ function swiper_formatter_update_8002(array &$sandbox): void {
   }
   $config_default->save();
 }
+
+/**
+ * Enable the Token module.
+ */
+function swiper_formatter_update_10201() {
+  /** @var \Drupal\Core\Extension\ModuleInstaller $module_installer */
+  $module_installer = \Drupal::service('module_installer');
+  $module_installer->install(['token']);
+}
