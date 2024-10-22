@@ -8,7 +8,6 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\image\ImageStyleInterface;
 
 /**
  * Dialog type field formatters interface.
@@ -70,10 +69,10 @@ interface SwiperInterface {
    * @param string $image_style
    *   Image style id.
    *
-   * @return \Drupal\image\ImageStyleInterface|null
+   * @return \Drupal\Core\Entity\EntityInterface|null
    *   Image style entity object.
    */
-  public function getImageStyle(string $image_style): ImageStyleInterface|NULL;
+  public function getImageStyle(string $image_style): EntityInterface|NULL;
 
   /**
    * Load swiper entity.

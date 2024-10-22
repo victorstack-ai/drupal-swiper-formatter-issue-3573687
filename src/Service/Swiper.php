@@ -20,9 +20,6 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Url;
-use Drupal\image\ImageStyleInterface;
-use Drupal\image\ImageStyleStorageInterface;
 use Drupal\swiper_formatter\Entity\SwiperFormatter;
 use Drupal\token\Token;
 
@@ -43,9 +40,9 @@ class Swiper implements SwiperInterface {
   /**
    * Image style storage.
    *
-   * @var \Drupal\image\ImageStyleStorageInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
-  public ImageStyleStorageInterface $imageStyleStorage;
+  public EntityStorageInterface $imageStyleStorage;
 
   /**
    * Constructs this base class.
@@ -93,7 +90,7 @@ class Swiper implements SwiperInterface {
   /**
    * {@inheritdoc}
    */
-  public function getImageStyle(string $image_style): ImageStyleInterface|NULL {
+  public function getImageStyle(string $image_style): EntityInterface|NULL {
     return $this->imageStyleStorage->load($image_style) ?? NULL;
   }
 
@@ -272,29 +269,21 @@ class Swiper implements SwiperInterface {
   public function getDestination(FieldDefinitionInterface $field_definition): array {
 
     $destination = substr($this->destination->get(), 0, (int) strpos($this->destination->get(), '?'));
-    $entity_type = $field_definition->getTargetEntityTypeId();
-    $route_name = 'entity.field_config.' . $entity_type . '_field_edit_form';
-    $target_bundle = $field_definition->getTargetBundle() ?? NULL;
-    $field_name = $field_definition->getFieldStorageDefinition()->getName();
-    $route_params = [
-      'field_config' => $entity_type . '.' . $target_bundle . '.' . $field_name,
-    ];
+    /* $entity_type = $field_definition->getTargetEntityTypeId(); */
+    /* $route_name = 'entity.field_config.' . $entity_type . '_field_edit_form'; */
+    /* $target_bundle = $field_definition->getTargetBundle() ?? NULL; */
+    /* $field_name = $field_definition->getFieldStorageDefinition()->getName(); */
+    /* $route_params = ['field_config' => $entity_type . '.' . $target_bundle . '.' . $field_name,];*/
     // A "famous bug" with paragraph vs. paragraphs entity type.
-    $type = $entity_type == 'paragraph' ? 'paragraphs' : $entity_type;
-    $route_params[$type . '_type'] = $target_bundle;
-    $uri_options = [
-      'fragment' => 'edit-settings-title-field',
-      'query' => ['destination' => $destination],
-    ];
-    $data = [
+    /* $type = $entity_type == 'paragraph' ? 'paragraphs' : $entity_type; */
+    /* $route_params[$type . '_type'] = $target_bundle; */
+    /* $uri_options = ['fragment' => 'edit-settings-title-field','query' => ['destination' => $destination],]; */
+    // Currently Views and Taxonomy fails, not having a parameter.
+    /* $data = []; */
+    /* if ($entity_type && $target_bundle) {$data['caption_field_edit_url'] = Url::fromRoute($route_name, $route_params, $uri_options)->toString();} */
+    return [
       'destination' => $destination,
     ];
-
-    // Currently Views fails, not having a bundle.
-    if ($entity_type && $target_bundle) {
-      $data['caption_field_edit_url'] = Url::fromRoute($route_name, $route_params, $uri_options)->toString();
-    }
-    return $data;
   }
 
   /**

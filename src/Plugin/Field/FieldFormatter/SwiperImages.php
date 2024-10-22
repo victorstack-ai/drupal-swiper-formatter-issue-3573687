@@ -72,6 +72,7 @@ class SwiperImages extends ImageFormatter {
         $image_style_setting = $data['settings']['image_style'] ?? NULL;
         if ($image_style_setting) {
           if ($image_style = $this->swiperBase->getImageStyle($image_style_setting)) {
+            /** @var \Drupal\image\ImageStyleInterface $image_style */
             $item['#background'] = $image_style->buildUrl($item['#item']->entity->getFileUri());
           }
         }
