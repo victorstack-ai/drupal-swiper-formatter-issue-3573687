@@ -4,27 +4,25 @@ declare(strict_types=1);
 
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\swiper_formatter\Service\SwiperDialogInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'Swiper markup Dialog' formatter.
- *
- * @FieldFormatter(
- *   id = "swiper_formatter_text_dialog",
- *   label = @Translation("Swiper markup Dialog"),
- *   field_types = {
- *     "text",
- *     "text_long",
- *     "text_with_summary"
- *   },
- *   quickedit = {
- *     "editor" = "form"
- *   }
- * )
  */
+#[FieldFormatter(
+  id: 'swiper_formatter_text_dialog',
+  label: new TranslatableMarkup('Swiper markup Dialog'),
+  field_types: [
+    'text',
+    'text_long',
+    'text_with_summary',
+  ]
+)]
 class SwiperTextDialog extends SwiperText {
 
   /**

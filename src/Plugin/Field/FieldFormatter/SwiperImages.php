@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 use Drupal\swiper_formatter\Service\SwiperInterface;
@@ -13,15 +15,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'Swiper images' formatter.
- *
- * @FieldFormatter(
- *   id = "swiper_formatter_image",
- *   label = @Translation("Swiper images"),
- *   field_types = {
- *     "image"
- *   }
- * )
  */
+#[FieldFormatter(
+  id: 'swiper_formatter_image',
+  label: new TranslatableMarkup('Swiper images'),
+  field_types: [
+    'image',
+  ]
+)]
 class SwiperImages extends ImageFormatter {
 
   use SwiperFormatterTrait;

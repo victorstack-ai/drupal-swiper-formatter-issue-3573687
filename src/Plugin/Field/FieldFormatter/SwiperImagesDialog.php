@@ -4,25 +4,23 @@ declare(strict_types=1);
 
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\swiper_formatter\Service\SwiperDialogInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'Swiper Dialog images' formatter.
- *
- * @FieldFormatter(
- *   id = "swiper_formatter_image_dialog",
- *   label = @Translation("Swiper images Dialog"),
- *   field_types = {
- *     "image",
- *   },
- *   quickedit = {
- *     "editor" = "form"
- *   }
- * )
  */
+#[FieldFormatter(
+  id: 'swiper_formatter_image_dialog',
+  label: new TranslatableMarkup('Swiper images Dialog'),
+  field_types: [
+    'image',
+  ]
+)]
 class SwiperImagesDialog extends SwiperImages {
 
   /**

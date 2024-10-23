@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\swiper_formatter\Service\SwiperInterface;
 use Drupal\swiper_formatter\SwiperFormatterTrait;
 use Drupal\text\Plugin\Field\FieldFormatter\TextTrimmedFormatter;
@@ -13,20 +15,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Plugin implementation of the 'Swiper markup' formatter.
  *
- * @FieldFormatter(
- *   id = "swiper_formatter_text",
- *   label = @Translation("Swiper markup"),
- *   field_types = {
- *     "text",
- *     "text_long",
- *     "text_with_summary"
- *   },
- *   quickedit = {
- *     "editor" = "form"
- *   }
- * )
  * @phpstan-consistent-constructor
  */
+#[FieldFormatter(
+  id: 'swiper_formatter_text',
+  label: new TranslatableMarkup('Swiper markup'),
+  field_types: [
+    'text',
+    'text_long',
+    'text_with_summary',
+  ]
+)]
 class SwiperText extends TextTrimmedFormatter {
 
   use SwiperFormatterTrait;

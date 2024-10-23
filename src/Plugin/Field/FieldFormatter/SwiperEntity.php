@@ -4,27 +4,26 @@ declare(strict_types=1);
 
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceEntityFormatter;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\swiper_formatter\Service\SwiperInterface;
 use Drupal\swiper_formatter\SwiperFormatterTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Plugin implementation of the 'swiper_formatter_text' formatter variant.
+ * Plugin implementation of the 'swiper_formatter_entity' formatter variant.
  *
- * @FieldFormatter(
- *   id = "swiper_formatter_entity",
- *   label = @Translation("Swiper entity"),
- *   field_types = {
- *     "entity_reference",
- *   },
- *   quickedit = {
- *     "editor" = "form"
- *   }
- * )
  * @phpstan-consistent-constructor
  */
+#[FieldFormatter(
+  id: 'swiper_formatter_entity',
+  label: new TranslatableMarkup('Swiper entity'),
+  field_types: [
+    'entity_reference',
+  ]
+)]
 class SwiperEntity extends EntityReferenceEntityFormatter {
 
   use SwiperFormatterTrait;

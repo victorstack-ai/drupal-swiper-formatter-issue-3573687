@@ -4,25 +4,23 @@ declare(strict_types=1);
 
 namespace Drupal\swiper_formatter\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\swiper_formatter\Service\SwiperDialogInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Plugin implementation of the 'Swiper Dialog images' formatter.
- *
- * @FieldFormatter(
- *   id = "swiper_formatter_paragraphs_dialog",
- *   label = @Translation("Swiper paragraphs Dialog"),
- *   field_types = {
- *     "entity_reference_revisions"
- *   },
- *   quickedit = {
- *     "editor" = "form"
- *   }
- * )
+ * Plugin implementation of the 'Swiper Dialog paragraphs' formatter.
  */
+#[FieldFormatter(
+  id: 'swiper_formatter_paragraphs_dialog',
+  label: new TranslatableMarkup('Swiper paragraphs Dialog'),
+  field_types: [
+    'entity_reference_revisions',
+  ]
+)]
 class SwiperParagraphsDialog extends SwiperParagraphs {
 
   /**
