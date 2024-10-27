@@ -28,8 +28,6 @@ class SwiperParagraphs extends EntityReferenceRevisionsEntityFormatter {
 
   use SwiperFormatterTrait;
 
-  use SwiperFormatterTrait;
-
   /**
    * Swiper formatter base service.
    *
