@@ -55,19 +55,16 @@ class SwiperDialog implements SwiperDialogInterface {
    * {@inheritdoc}
    */
   public function processElements(FieldableEntityInterface $entity, array $dialog_options, array &$elements, ?string $field = NULL, int $field_item = 0): void {
-    $theme = $elements['#theme'] ?? NULL;
-    if ($theme == 'swiper_formatter') {
-      $elements['#id'] .= '-modal';
-      $elements['#attributes']['id'] .= '-modal';
-    }
-    foreach ($elements['#content'] as $delta => &$item) {
-      $this->processLink($item, $entity, (string) $delta, $dialog_options, $field, $field_item);
-    }
-    if ($dialog_options['dialog_type'] == 'modal') {
-      $elements['#attached']['library'][] = 'core/drupal.dialog.ajax';
-    }
-    else {
-      $elements['#attached']['library'][] = 'core/drupal.dialog.off_canvas';
+    if (!empty($elements['#content'])) {
+      foreach ($elements['#content'] as $delta => &$item) {
+        $this->processLink($item, $entity, (string) $delta, $dialog_options, $field, $field_item);
+      }
+      if ($dialog_options['dialog_type'] == 'modal') {
+        $elements['#attached']['library'][] = 'core/drupal.dialog.ajax';
+      }
+      else {
+        $elements['#attached']['library'][] = 'core/drupal.dialog.off_canvas';
+      }
     }
   }
 

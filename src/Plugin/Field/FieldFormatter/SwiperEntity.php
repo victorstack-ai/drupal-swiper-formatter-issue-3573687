@@ -58,6 +58,10 @@ class SwiperEntity extends EntityReferenceEntityFormatter {
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $output = parent::viewElements($items, $langcode);
+    // No items/values for this field yet.
+    if (!$items->count()) {
+      return $output;
+    }
     $entity = $items->getEntity();
     $data = $this->swiperBase->processElements($this->fieldDefinition, $entity, $this->getSettings(), $output);
     foreach ($data['output'] as $delta => &$item) {
