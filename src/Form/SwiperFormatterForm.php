@@ -1388,7 +1388,7 @@ class SwiperFormatterForm extends EntityForm {
    * @param string $key
    *   A form element's key.
    * @param array $default_values
-   *   An array with current vallues for the field (in config).
+   *   An array with current values for the field (in config).
    *
    * @return int
    *   A current number of field items within the form.
