@@ -12,3 +12,5 @@ parameters:
   reportUnmatchedIgnoredErrors: false
   excludePaths:
     - node_modules
+  paths:
+    - ../../../../web/modules/contrib
