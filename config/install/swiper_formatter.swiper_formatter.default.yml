@@ -4,6 +4,7 @@ dependencies: {  }
 id: default
 label: Default
 description: 'This default template is mostly for demonstration purpose, feel free to edit it or create (as many) new ones.'
+breakpoint: false
 swiper_options:
   autoplay:
     enabled: false
@@ -17,21 +18,19 @@ swiper_options:
     enabled: true
     hideOnClick: false
   pagination:
-    enabled: false
+    enabled: true
     type: bullets
-    dynamicBullets: false
-    clickable: false
+    dynamicBullets: true
+    clickable: true
   scrollbar:
-    enabled: false
+    enabled: true
     draggable: false
-    dragSize: 'auto'
+    dragSize: auto
     hide: true
     snapOnRelease: false
   breakpoints:
     -
-      breakpoint: null
-      swiper_template: null
-      weight: 0
+      weight: '0'
   lazy:
     enabled: false
     checkInView: false
@@ -39,28 +38,25 @@ swiper_options:
     loadPrevNext: false
     loadPrevNextAmount: 1
     scrollingElement: window
-  enabled: true
   source: remote
-  breakpoint: false
-  breakpointsBase: 'window'
+  breakpointsBase: window
   autoHeight: true
   width: null
   height: null
-  observer: false
+  observer: 0
   updateOnWindowResize: true
   resizeObserver: true
   direction: horizontal
   effect: slide
-  loop: false
-  rewind: false
-  centeredSlides: false
+  loop: 0
+  rewind: 0
+  centeredSlides: 0
   speed: 300
-  slidesPerView: 1
-  spaceBetween: 0
+  slidesPerView: 1.0
+  spaceBetween: '0'
   slidesPerGroup: 1
   loopedSlides: 1
   noSwipingSelector: '.no-swipe, button, input'
-  mousewheel: false
-  grabCursor: false
-  cssMode: false
-
+  mousewheel: 0
+  grabCursor: 0
+  cssMode: 0
