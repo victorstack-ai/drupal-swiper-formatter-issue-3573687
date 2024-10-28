@@ -44,7 +44,7 @@ class SwiperFormatterForm extends EntityForm {
    *
    * @var array
    */
-  public const array SWIPER_MODULES = [
+  public const SWIPER_MODULES = [
     'navigation',
     'pagination',
     'autoplay',
@@ -74,9 +74,10 @@ class SwiperFormatterForm extends EntityForm {
 
     $form = parent::form($form, $form_state);
 
-    $default_setting = $this->config('swiper_formatter.settings')->getRawData();
+    /* $default_setting = $this->config('swiper_formatter.settings')->getRawData(); */
+    $default_setting = $this->config('swiper_formatter.swiper_formatter.default')->get('swiper_options');
     /** @var \Drupal\swiper_formatter\Entity\SwiperFormatter $swiper_entity */
-    $swiper_entity = $this->entity;
+    $swiper_entity = $this->getEntity();
     $default_values = array_merge($default_setting, $swiper_entity->swiper_options);
 
     $form['label'] = [
@@ -112,7 +113,7 @@ class SwiperFormatterForm extends EntityForm {
     $form['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enabled'),
-      '#default_value' => $this->entity->get('breakpoint') ? TRUE : $default_values['enabled'],
+      '#default_value' => $this->entity->get('breakpoint') ? TRUE : $this->config('swiper_formatter.swiper_formatter.default')->get('status'),
       '#description' => $this->t("Whether Swiper initially enabled. When Swiper is disabled, it will hide all navigation elements and won't respond to any events and interactions."),
       '#states' => [
         'visible' => [
@@ -126,6 +127,7 @@ class SwiperFormatterForm extends EntityForm {
       '#title' => $this->t('Swiper library source'),
       '#description' => $this->t('Under some conditions, usage of some themes and/or other libraries, some issues may occur. Set to local library to try to resolve, but please first make sure to have mandatory for <em>Local</em> <a target="_blank" href="https://unpkg.com/swiper@8/swiper-bundle.min.js">swiper-bundle.js</a> and <a target="_blank" href="https://unpkg.com/swiper@8/swiper-bundle.css">swiper-bundle.min.css</a> and/or mandatory for <em>Local minified</em> <a target="_blank" href="https://unpkg.com/swiper@8/swiper-bundle.min.js">swiper-bundle.min.js</a> and <a target="_blank" href="https://unpkg.com/swiper@8/swiper-bundle.min.css">swiper-bundle.min.css</a> <strong>downloaded and placed in <strong>/libraries/swiper/</strong> folder.</strong>'),
       '#options' => [
+        'package' => $this->t('Package'),
         'remote' => $this->t('Remote (cdn)'),
         'local' => $this->t('Local'),
         'local_minified' => $this->t('Local minified'),

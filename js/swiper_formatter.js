@@ -3,78 +3,74 @@
  * Init instances of Swiper on any page.
  */
 
+/*global Drupal, once, Swiper*/
+/*eslint no-undef: "error"*/
 (function (Drupal, once) {
-
   'use strict';
 
-  Drupal.swiper_formatter = Drupal.swiper_formatter || {};
-
-   /**
-    * Drupal.behaviors implementation for Swiper formatter.
-    *
-    * Register and initialize all Swiper instances on the page.
-    */
-   Drupal.behaviors.nkToolsSwiper = {
-
-    attach: function(context, settings) {
-
+  /**
+   * Drupal.behaviors implementation for Swiper formatter.
+   *
+   * Register and initialize all Swiper instances on the page.
+   */
+  Drupal.behaviors.swiperFormatter = {
+    attach: function (context, settings) {
       const self = this;
-
       const swiper_formatter_settings = settings.swiper_formatter || null;
 
       if (swiper_formatter_settings && typeof swiper_formatter_settings.swipers !== 'undefined') {
-
+        const swiper = typeof Swiper !== 'undefined' ? Swiper : (window.SwiperFormatter ?? null);
         let swipers = {};
-
-        once('swiperFormatterInit', '.swiper-container', context).forEach(function(swiperContainer) {
-
-	        if (swiperContainer.id) {
-            const swiperSettings = swiper_formatter_settings.swipers[swiperContainer.id];
-            if (typeof swiperSettings === 'object' && typeof Swiper !== 'undefined') {
-
-              if (swiperSettings.pagination.type === 'progressbar') {
-	              swiperContainer.classList.add('progressbar');
-              }
-
-              // Initialize Swiper now.
-              swipers[swiperContainer.id] = new Swiper('#' + swiperContainer.id, swiperSettings);
-
-              if (swipers[swiperContainer.id]) {
-                // A special care for dynamic and/or clickable bullets.
-                swipers[swiperContainer.id].on('breakpoint', (swiperEvent, breakpointParams) => {
-                  self.breakpointPagination(swiperEvent, breakpointParams);
-                });
-
-                // A custom links (anywhere on the page) that trigger swiper slides.
-                const triggers = context.querySelectorAll('.swiper-trigger');
-                if (triggers) {
-                  self.registerTriggers(swipers[swiperContainer.id], Array.from(triggers));
+        once('swiperFormatterInit', '.swiper-container', context).forEach(
+          function (swiperContainer) {
+            if (swiperContainer.id) {
+              const swiperSettings = swiper_formatter_settings.swipers[swiperContainer.id];
+              if (typeof swiperSettings === 'object' && swiper) {
+                if (swiperSettings.pagination.type === 'progressbar') {
+                  swiperContainer.classList.add('progressbar');
                 }
-              }
 
-              // Add swipers site-wide via drupalSettings.
-              settings.swipers = swipers;
-	          }
-	        }
-	      });
+                // Initialize Swiper now.
+                swipers[swiperContainer.id] = new swiper('#' + swiperContainer.id, swiperSettings);
+                if (swipers[swiperContainer.id]) {
+                  // A special care for dynamic and/or clickable bullets.
+                  swipers[swiperContainer.id].on('breakpoint', (swiperEvent, breakpointParams) => {
+                    self.breakpointPagination(swiperEvent, breakpointParams);
+                  });
+
+                  // A custom links (anywhere on the page) that trigger swiper slides.
+                  const triggers = context.querySelectorAll('.swiper-trigger');
+                  if (triggers) {
+                    self.registerTriggers(swipers[swiperContainer.id], Array.from(triggers));
+                  }
+                }
+
+                // Add swipers site-wide via drupalSettings.
+                settings.swipers = swipers;
+              }
+            }
+          }
+        );
       }
     },
 
     /**
-      * Handle breakpoint pagination classes on window resize.
-      *
-      * @param {Object} swiperEvent
-      *  Current Swiper "_beforeBreakpoint" event object.
-      * @param {Object} breakpointParams
-      *  An object containing properties of current set breakpoint.
-      */
-    breakpointPagination: function(swiperEvent, breakpointParams) {
+     * Handle breakpoint pagination classes on window resize.
+     *
+     * @param {Object} swiperEvent
+     *  Current Swiper "_beforeBreakpoint" event object.
+     * @param {Object} breakpointParams
+     *  An object containing properties of current set breakpoint.
+     */
+    breakpointPagination: function (swiperEvent, breakpointParams) {
       if (breakpointParams.pagination && breakpointParams.pagination.enabled) {
         const paginationWrapper = swiperEvent.pagination.el;
         if (paginationWrapper) {
           const hasBullets = paginationWrapper.classList.contains('swiper-pagination-bullets');
-          const dynamicBullets = hasBullets && paginationWrapper.classList.contains('swiper-pagination-bullets-dynamic');
-          const clickableBullets = hasBullets && paginationWrapper.classList.contains('swiper-pagination-clickable');
+          const dynamicBullets =
+            hasBullets && paginationWrapper.classList.contains('swiper-pagination-bullets-dynamic');
+          const clickableBullets =
+            hasBullets && paginationWrapper.classList.contains('swiper-pagination-clickable');
           if (breakpointParams.pagination.type !== 'bullets') {
             if (hasBullets) {
               paginationWrapper.classList.remove('swiper-pagination-bullets');
@@ -95,13 +91,11 @@
 
               if (styles.length && styles[0]) {
                 paginationWrapper.setAttribute('style', styles.join(';'));
-              }
-              else {
+              } else {
                 paginationWrapper.removeAttribute('style');
               }
             }
-          }
-          else {
+          } else {
             paginationWrapper.classList.add('swiper-pagination-bullets');
             if (breakpointParams.pagination.dynamicBullets) {
               paginationWrapper.classList.add('swiper-pagination-bullets-dynamic');
@@ -128,10 +122,9 @@
      *  </ul>
      * @endcode
      */
-    registerTriggers: function(swiper, triggers) {
-      triggers.forEach(function(trigger) {
+    registerTriggers: function (swiper, triggers) {
+      triggers.forEach(function (trigger) {
         trigger.addEventListener('click', (e) => {
-
           const target = e.currentTarget || e.target;
           // Take care of siblings' active class.
           if (target.parentNode.siblings().length) {
@@ -142,12 +135,13 @@
 
           target.classList.add('active');
 
-          const index = target.getAttribute('data-index') ? parseInt(target.getAttribute('data-index')) - 1 : 0;
+          const index = target.getAttribute('data-index')
+            ? parseInt(target.getAttribute('data-index')) - 1
+            : 0;
           swiper.slideTo(index);
           return false;
         });
       });
     }
   };
-
 })(Drupal, once);

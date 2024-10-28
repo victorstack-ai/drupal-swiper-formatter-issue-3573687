@@ -10,3 +10,5 @@ parameters:
   ignoreErrors:
     - identifier: missingType.iterableValue
   reportUnmatchedIgnoredErrors: false
+  excludePaths:
+    - node_modules
