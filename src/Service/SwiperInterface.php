@@ -123,6 +123,8 @@ interface SwiperInterface {
   /**
    * Generate unique ID for swiper, or the other element(s).
    *
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   A field definition object.
    * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   Entity to which the field is attached. Or referenced entity if opted so.
    * @param string|null $view_mode
@@ -133,7 +135,7 @@ interface SwiperInterface {
    * @return string
    *   Unique string to be used as attribute (id) or similar.
    */
-  public function elementId(FieldableEntityInterface $entity, ?string $view_mode = NULL, ?string $delta = NULL): string;
+  public function elementId(FieldDefinitionInterface $field_definition, FieldableEntityInterface $entity, ?string $view_mode = NULL, ?string $delta = NULL): string;
 
   /**
    * Define swiper's theme render-able array.
@@ -151,6 +153,21 @@ interface SwiperInterface {
   public function renderSwiper(FieldableEntityInterface $entity, array $output, array $settings): array;
 
   /**
+   * Render swiper slide theme.
+   *
+   * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+   *   Entity to which the field is attached. Or referenced entity if opted so.
+   * @param array $settings
+   *   Formatter settings array.
+   * @param array $item
+   *   Current item in a theme render array.
+   *
+   * @return array
+   *   Swiper slide theme array.
+   */
+  public function renderSwiperSlide(FieldableEntityInterface $entity, array $settings, array $item): array;
+
+  /**
    * Get value for a swiper caption.
    *
    * @param array $item
@@ -160,7 +177,7 @@ interface SwiperInterface {
    * @param \Drupal\Core\Entity\FieldableEntityInterface|null $entity
    *   Entity to which the field is attached.
    * @param int $delta
-   *   The current index of an item in content array.
+   *   The current index of an item in a content array.
    */
   public function getCaption(array &$item, ?string $caption_field = NULL, ?FieldableEntityInterface $entity = NULL, int $delta = 0): void;
 

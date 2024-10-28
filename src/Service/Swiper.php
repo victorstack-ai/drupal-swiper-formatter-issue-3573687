@@ -7,6 +7,7 @@ namespace Drupal\swiper_formatter\Service;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
@@ -17,10 +18,13 @@ use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Template\Attribute;
 use Drupal\swiper_formatter\Entity\SwiperFormatter;
+use Drupal\swiper_formatter\SwiperFormatterInterface;
 use Drupal\token\Token;
 
 /**
@@ -191,11 +195,10 @@ class Swiper implements SwiperInterface {
 
     $settings['field_type'] = $field_definition->getFieldStorageDefinition()->getType();
     $settings['field_name'] = $field_definition->getFieldStorageDefinition()->getName();
-
-    if ($swiper_entity = $this->swiperFormatter->load($template)) {
+    if ($swiper_entity = $this->getSwiper($template)) {
       /** @var \Drupal\swiper_formatter\SwiperFormatterInterface $swiper_entity */
       $settings += $swiper_entity->get('swiper_options');
-      $id = $this->elementId($entity);
+      $id = $this->elementId($field_definition, $entity);
       $settings['id'] = $id;
       $elements['settings'] = $settings;
     }
@@ -205,31 +208,46 @@ class Swiper implements SwiperInterface {
   /**
    * {@inheritdoc}
    */
-  public function elementId(FieldableEntityInterface $entity, ?string $view_mode = NULL, ?string $delta = NULL): string {
-    $id = 'default';
-    // Has no view mode nor delta param.
-    if (!$view_mode && is_null($delta)) {
-      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id();
-    }
-    elseif ($view_mode && $delta == NULL) {
-      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $view_mode;
-    }
-    elseif (!$view_mode && $delta != NULL) {
-      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $delta;
-    }
-    // Has both params.
-    elseif ($view_mode && !is_null($delta)) {
-      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $delta . '-' . $view_mode;
-    }
-    return Html::getUniqueId($id);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function renderSwiper(FieldableEntityInterface $entity, array $output, array $settings): array {
-    $id = $settings['id'] ?? $this->elementId($entity);
-    return [
+
+    $id = $settings['id'] ?? $this->elementId($entity->get($settings['field_name'])->getFieldDefinition(), $entity);
+
+    // Breakpoints check.
+    $settings['has_breakpoint_navigation'] = FALSE;
+    $settings['has_breakpoint_pagination'] = FALSE;
+    $settings['has_breakpoint_slides_per_view'] = 1;
+    $settings['has_breakpoint_slides_per_group'] = 1;
+
+    if (!empty($settings['breakpoints'])) {
+      $this->prepareBreakpoints($settings);
+    }
+
+    $content_attributes = [
+      'class' => [
+        'swiper-wrapper',
+      ],
+    ];
+    $navigation_attributes = $this->prepareNavigation($id, $settings);
+    $pagination_attributes = $this->preparePagination($id, $settings);
+    $scrollbar_attributes = $this->prepareScrollbar($id, $settings);
+
+    // Render slides now.
+    foreach ($output as &$item) {
+      $item = $this->renderSwiperSlide($entity, $settings, $item);
+    }
+
+    // Set settings to send to js.
+    $drupal_settings['swiper_formatter']['swipers'][$id] = $settings;
+    $library = [
+      'swiper_formatter/' . $settings['source'],
+      'swiper_formatter/swiper_formatter',
+    ];
+    $dialog = $settings['dialog_type'] ?? NULL;
+    if ($dialog) {
+      $library[] = 'swiper_formatter/dialog';
+    }
+
+    $swiper = [
       '#theme' => 'swiper_formatter',
       '#id' => $id,
       '#object' => $entity,
@@ -239,9 +257,90 @@ class Swiper implements SwiperInterface {
         'id' => $id,
         'class' => [
           'swiper-container',
+          Html::getClass($settings['template']),
+        ],
+      ],
+      '#content_attributes' => new Attribute($content_attributes),
+      '#navigation_attributes' => $navigation_attributes,
+      '#pagination_attributes' => $pagination_attributes,
+      '#scrollbar_attributes' => $scrollbar_attributes,
+      '#attached' => [
+        'drupalSettings' => $drupal_settings,
+        'library' => $library,
+      ],
+    ];
+
+    return $swiper;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function elementId(FieldDefinitionInterface $field_definition, FieldableEntityInterface $entity, ?string $view_mode = NULL, ?string $delta = NULL): string {
+    $id = 'default';
+    // Has no view mode nor delta param.
+    if (!$view_mode && is_null($delta)) {
+      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $field_definition->getName();
+    }
+    elseif ($view_mode && $delta == NULL) {
+      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $field_definition->getName() . '-' . $view_mode;
+    }
+    elseif (!$view_mode && $delta != NULL) {
+      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $field_definition->getName() . '-' . $delta;
+    }
+    // Has both params.
+    elseif ($view_mode && !is_null($delta)) {
+      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $field_definition->getName() . '-' . $delta . '-' . $view_mode;
+    }
+    return Html::getUniqueId($id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function renderSwiperSlide(FieldableEntityInterface $entity, array $settings, array $item): array {
+    $slide = [
+      '#theme' => 'swiper_formatter_slide',
+      '#slide' => $item,
+      '#object' => $entity,
+      '#settings' => $settings,
+      '#attributes' => [
+        'class' => [
+          'swiper-slide',
+          'swiper-slide-' . Html::cleanCssIdentifier($settings['field_type']),
         ],
       ],
     ];
+    // Check on caption.
+    if (!empty($item['#caption'])) {
+      $caption_value = is_array($item['#caption']) && isset($item['#caption']['value']) ? $item['#caption']['value'] : $item['#caption'];
+      $slide['#caption'] = [
+        '#markup' => Markup::create($caption_value),
+      ];
+    }
+
+    // Take care of some caching,
+    // i.e., update if swiper template changed.
+    $cache_tags = [
+      'config:swiper_formatter.swiper_formatter.' . $settings['template'],
+    ];
+
+    if (isset($item['#cache'])) {
+      $slide['#cache']['tags'] = Cache::mergeTags($item['#cache']['tags'], $cache_tags);
+    }
+    else {
+      $slide['#cache']['tags'] = $cache_tags;
+    }
+
+    // Add an extra cache key to avoid conflict with
+    // an original view mode cached version as a workaround to the current
+    // implementation until the main logic is reworked.
+    // Just in case it's not an entity, we add a check.
+    $keys = $item['#cache']['keys'] ?? [];
+    if (in_array('entity_view', $keys)) {
+      $slide['#cache']['keys'][] = 'swiper-slide';
+    }
+    return $slide;
   }
 
   /**
@@ -251,7 +350,7 @@ class Swiper implements SwiperInterface {
     $item['#caption'] = match ($caption_field) {
       'title' => isset($item['#item']) && $item['#item']->title ? $item['#item']->title : NULL,
       'alt' => isset($item['#item']) && $item['#item']->alt ? $item['#item']->alt : NULL,
-      default => $entity && $entity->hasField($caption_field) ? ($entity->get($caption_field)->get($delta)->getValue() ?? NULL) : NULL,
+      default => $entity && $entity->hasField($caption_field) ? ($entity->get($caption_field)->get($delta) && $entity->get($caption_field)->get($delta)->getValue() ? $entity->get($caption_field)->get($delta)->getValue() : NULL) : NULL,
     };
   }
 
@@ -284,6 +383,133 @@ class Swiper implements SwiperInterface {
     return [
       'destination' => $destination,
     ];
+  }
+
+  /**
+   * Prepare navigation attributes, assign prev/next elements to swiper config.
+   *
+   * @param string $id
+   *   Swiper unique id.
+   * @param array $settings
+   *   Referenced formatter settings array.
+   *
+   * @return \Drupal\Core\Template\Attribute[]
+   *   Array with attributes for prev/next buttons.
+   */
+  protected function prepareNavigation(string $id, array &$settings) {
+    // We need to do these two separately, to
+    // preserve classes for default Swiper styling/CSS.
+    $settings['navigation']['prevEl'] = '.' . $id . '-prev';
+    $settings['navigation']['nextEl'] = '.' . $id . '-next';
+
+    $prev_attributes = [
+      'class' => [
+        'swiper-button-prev',
+        $id . '-prev',
+      ],
+    ];
+
+    $next_attributes = [
+      'class' => [
+        'swiper-button-next',
+        $id . '-next',
+      ],
+    ];
+
+    return [
+      'prev' => new Attribute($prev_attributes),
+      'next' => new Attribute($next_attributes),
+    ];
+  }
+
+  /**
+   * Prepare pagination attributes and assign an element to the swiper config.
+   *
+   * @param string $id
+   *   Swiper unique id.
+   * @param array $settings
+   *   Referenced formatter settings array.
+   *
+   * @return \Drupal\Core\Template\Attribute
+   *   Array with attributes for prev/next buttons.
+   */
+  protected function preparePagination(string $id, array &$settings): Attribute {
+    $settings['pagination']['el'] = '.pagination-' . $id;
+    $pagination_attributes = [
+      'class' => [
+        'swiper-pagination',
+        'pagination-' . $id,
+      ],
+    ];
+    return new Attribute($pagination_attributes);
+  }
+
+  /**
+   * Prepare pagination attributes and assign an element to the swiper config.
+   *
+   * @param string $id
+   *   Swiper unique id.
+   * @param array $settings
+   *   Referenced formatter settings array.
+   *
+   * @return \Drupal\Core\Template\Attribute
+   *   Array with attributes for prev/next buttons.
+   */
+  protected function prepareScrollbar(string $id, array &$settings): Attribute {
+    $settings['scrollbar']['el'] = '.scrollbar-' . $id;
+    $scrollbar_attributes = [
+      'class' => [
+        'swiper-scrollbar',
+        'scrollbar-' . $id,
+      ],
+    ];
+    return new Attribute($scrollbar_attributes);
+  }
+
+  /**
+   * Prepare breakpoints for the swiper config.
+   *
+   * @param array $settings
+   *   Referenced formatter settings array.
+   */
+  protected function prepareBreakpoints(array &$settings): void {
+    $breakpoints = [];
+    foreach ($settings['breakpoints'] as $breakpoint) {
+      if (isset($breakpoint['swiper_template'])) {
+        /** @var \Drupal\swiper_formatter\Entity\SwiperFormatter $breakpoint_template */
+        $breakpoint_template = $this->getSwiper($breakpoint['swiper_template']);
+        if ($breakpoint_template instanceof SwiperFormatterInterface && !empty($breakpoint['breakpoint'])) {
+          $breakpoints[$breakpoint['breakpoint']] = $breakpoint_template->swiper_options;
+        }
+      }
+    }
+    if (!empty($breakpoints)) {
+      $settings['breakpoints'] = [];
+      $include = ['slidesPerView', 'spaceBetween', 'navigation', 'pagination'];
+      foreach ($breakpoints as $key => $breakpoint) {
+        foreach ($breakpoint as $k => $b) {
+          if (in_array($k, $include)) {
+            $settings['breakpoints'][$key][$k] = $b;
+            if ($k == 'navigation') {
+              $settings['has_breakpoint_navigation'] = TRUE;
+            }
+            if ($k == 'pagination') {
+              $settings['has_breakpoint_pagination'] = TRUE;
+            }
+            if ($k == 'slidesPerView') {
+              $settings['has_breakpoint_slides_per_view'] = $b;
+            }
+            if ($k == 'slidesPerGroup') {
+              $settings['has_breakpoint_slides_per_group'] = $b;
+            }
+            $settings['has_breakpoint_slides_per_group'] = FALSE;
+          }
+        }
+      }
+    }
+    else {
+      unset($settings['breakpoints']);
+    }
   }
 
   /**

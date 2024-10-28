@@ -8,14 +8,9 @@
 declare(strict_types=1);
 
 use Drupal\Component\Render\MarkupInterface;
-use Drupal\Component\Utility\Html;
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
-use Drupal\swiper_formatter\SwiperFormatterInterface;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -233,180 +228,15 @@ function swiper_formatter_theme_suggestions_swiper_formatter_view_modes(array $v
  * Implements template_preprocess_hook().
  */
 function template_preprocess_swiper_formatter(array &$variables): void {
-
   // Skip swiper format when number of slides less than two.
   // @see https://www.drupal.org/project/swiper_formatter/issues/3479245.
   if (count($variables['content']) < 2) {
-    \Drupal::service('messenger')->addWarning(t('The number of slides is less than two, skipping Swiper formatting.'));
-    return;
-  }
-
-  $formatter_settings = &$variables['settings'];
-
-  if (isset($formatter_settings['template'])) {
-    $variables['attributes']['class'][] = Html::getClass($formatter_settings['template']);
-  }
-
-  $content_attributes = [
-    'class' => [
-      'swiper-wrapper',
-    ],
-  ];
-
-  $variables['content_attributes'] = new Attribute($content_attributes);
-
-  // Breakpoints check.
-  $formatter_settings['has_breakpoint_navigation'] = FALSE;
-  $formatter_settings['has_breakpoint_pagination'] = FALSE;
-  $formatter_settings['has_breakpoint_slides_per_view'] = 1;
-  $formatter_settings['has_breakpoint_slides_per_group'] = 1;
-
-  if (!empty($formatter_settings['breakpoints'])) {
-    $breakpoints = [];
-    foreach ($formatter_settings['breakpoints'] as $breakpoint) {
-      if (isset($breakpoint['swiper_template'])) {
-        $breakpoint_template = \Drupal::service('entity_type.manager')->getStorage('swiper_formatter')->load($breakpoint['swiper_template']);
-        if ($breakpoint_template instanceof SwiperFormatterInterface & !empty($breakpoint['breakpoint'])) {
-          /** @var \Drupal\swiper_formatter\Entity\SwiperFormatter $breakpoint_template */
-          $breakpoints[$breakpoint['breakpoint']] = $breakpoint_template->swiper_options;
-        }
-      }
+    $current_user = \Drupal::service('current_user');
+    $has_permission = \Drupal::service('permission_checker')->hasPermission('administer swiper_formatter', $current_user);
+    if ($has_permission) {
+      \Drupal::service('messenger')->addWarning(t('The number of slides is less than two, skipping Swiper formatting.'));
     }
-    if (!empty($breakpoints)) {
-      $formatter_settings['breakpoints'] = [];
-      $include = ['slidesPerView', 'spaceBetween', 'navigation', 'pagination'];
-      foreach ($breakpoints as $key => $breakpoint) {
-        foreach ($breakpoint as $k => $b) {
-          if (in_array($k, $include)) {
-            $formatter_settings['breakpoints'][$key][$k] = $b;
-            if ($k == 'navigation') {
-              $formatter_settings['has_breakpoint_navigation'] = TRUE;
-            }
-            if ($k == 'pagination') {
-              $formatter_settings['has_breakpoint_pagination'] = TRUE;
-            }
-            if ($k == 'slidesPerView') {
-              $formatter_settings['has_breakpoint_slides_per_view'] = $b;
-            }
-            if ($k == 'slidesPerGroup') {
-              $formatter_settings['has_breakpoint_slides_per_group'] = $b;
-            }
-
-            $formatter_settings['has_breakpoint_slides_per_group'] = FALSE;
-          }
-        }
-      }
-    }
-    else {
-      unset($formatter_settings['breakpoints']);
-    }
-  }
-
-  if ($formatter_settings['navigation']['enabled'] || $formatter_settings['has_breakpoint_navigation']) {
-
-    // We need to do these two separately, to
-    // preserve classes for default Swiper styling/CSS.
-    $formatter_settings['navigation']['prevEl'] = '.' . $variables['id'] . '-prev';
-    $formatter_settings['navigation']['nextEl'] = '.' . $variables['id'] . '-next';
-
-    $prev_attributes = [
-      'class' => [
-        'swiper-button-prev',
-        $variables['id'] . '-prev',
-      ],
-    ];
-
-    $next_attributes = [
-      'class' => [
-        'swiper-button-next',
-        $variables['id'] . '-next',
-      ],
-    ];
-
-    $variables['navigation_attributes'] = [
-      'prev' => new Attribute($prev_attributes),
-      'next' => new Attribute($next_attributes),
-    ];
-  }
-
-  if ($formatter_settings['pagination']['enabled'] || $formatter_settings['has_breakpoint_pagination']) {
-    $formatter_settings['pagination']['el'] = '.pagination-' . $variables['id'];
-    $pagination_attributes = [
-      'class' => [
-        'swiper-pagination',
-        'pagination-' . $variables['id'],
-      ],
-    ];
-    $variables['pagination_attributes'] = new Attribute($pagination_attributes);
-  }
-
-  if (!empty($formatter_settings['scrollbar']['enabled'])) {
-
-    $formatter_settings['scrollbar']['el'] = '.scrollbar-' . $variables['id'];
-    $scrollbar_attributes = [
-      'class' => [
-        'swiper-scrollbar',
-        'scrollbar-' . $variables['id'],
-      ],
-    ];
-    $variables['scrollbar_attributes'] = new Attribute($scrollbar_attributes);
-  }
-
-  foreach ($variables['content'] as &$item) {
-
-    // Take care of some caching,
-    // i.e., update if swiper template changed.
-    $cache_tags = [
-      'config:swiper_formatter.swiper_formatter.' . $formatter_settings['template'],
-    ];
-
-    if (isset($item['#cache'])) {
-      $item['#cache']['tags'] = Cache::mergeTags($item['#cache']['tags'], $cache_tags);
-    }
-    else {
-      $item['#cache']['tags'] = $cache_tags;
-    }
-
-    // Make caption markup, if any.
-    if (!empty($item['#caption'])) {
-      $caption_value = is_array($item['#caption']) && isset($item['#caption']['value']) ? $item['#caption']['value'] : $item['#caption'];
-      $item['#caption'] = [
-        '#markup' => Markup::create($caption_value),
-      ];
-    }
-
-    $item['#slide'] = $item;
-    $item['#theme'] = 'swiper_formatter_slide';
-    $item['#settings'] = $formatter_settings;
-    $item['#object'] = $variables['object'];
-    $item['#attributes']['class'] = [
-      'swiper-slide',
-      'swiper-slide-' . Html::cleanCssIdentifier($formatter_settings['field_type']),
-    ];
-
-    // Add an extra cache key to avoid conflict with
-    // an original view mode cached version as a workaround to the current
-    // implementation until the main logic is reworked.
-    // Just in case it's not an entity, we add a check.
-    $keys = $item['#cache']['keys'] ?? [];
-    if (in_array('entity_view', $keys)) {
-      $item['#cache']['keys'][] = 'swiper-slide';
-    }
-
-  }
-
-  // Add our js settings and libraries.
-  if (!isset($variables['#attached']['drupalSettings']['swiper_formatter'])) {
-    $variables['#attached']['drupalSettings']['swiper_formatter'] = [
-      'swipers' => [],
-    ];
-  }
-
-  $variables['#attached']['drupalSettings']['swiper_formatter']['swipers'][$variables['id']] = $formatter_settings;
-  $variables['#attached']['library'][] = 'swiper_formatter/' . $formatter_settings['source'];
-  $variables['#attached']['library'][] = 'swiper_formatter/swiper_formatter';
-  $dialog = $variables['settings']['dialog_type'] ?? NULL;
-  if ($dialog) {
-    $variables['#attached']['library'][] = 'swiper_formatter/dialog';
+    // Unset swiper initialization.
+    $variables['drupalSettings']['swiper_formatter']['swipers'] = [];
   }
 }
