@@ -60,10 +60,10 @@ class SwiperEntity extends EntityReferenceEntityFormatter {
     $output = parent::viewElements($items, $langcode);
     $entity = $items->getEntity();
     $data = $this->swiperBase->processElements($this->fieldDefinition, $entity, $this->getSettings(), $output);
-    foreach ($data['output'] as &$item) {
+    foreach ($data['output'] as $delta => &$item) {
       // Caption handling.
       $caption = $data['settings']['caption'] ?? NULL;
-      $this->swiperBase->getCaption($item, $caption, $entity);
+      $this->swiperBase->getCaption($item, $caption, $entity, $delta);
     }
     return $this->swiperBase->renderSwiper($entity, $data['output'], $data['settings']);
   }

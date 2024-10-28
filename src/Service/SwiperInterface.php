@@ -159,8 +159,10 @@ interface SwiperInterface {
    *   The machine name of the caption field, if any.
    * @param \Drupal\Core\Entity\FieldableEntityInterface|null $entity
    *   Entity to which the field is attached.
+   * @param int $delta
+   *   The current index of an item in content array.
    */
-  public function getCaption(array &$item, ?string $caption_field = NULL, ?FieldableEntityInterface $entity = NULL): void;
+  public function getCaption(array &$item, ?string $caption_field = NULL, ?FieldableEntityInterface $entity = NULL, int $delta = 0): void;
 
   /**
    * Render replacement value for a token.

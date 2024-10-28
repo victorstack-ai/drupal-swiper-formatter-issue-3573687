@@ -247,11 +247,11 @@ class Swiper implements SwiperInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCaption(array &$item, ?string $caption_field = NULL, ?FieldableEntityInterface $entity = NULL): void {
+  public function getCaption(array &$item, ?string $caption_field = NULL, ?FieldableEntityInterface $entity = NULL, int $delta = 0): void {
     $item['#caption'] = match ($caption_field) {
       'title' => isset($item['#item']) && $item['#item']->title ? $item['#item']->title : NULL,
       'alt' => isset($item['#item']) && $item['#item']->alt ? $item['#item']->alt : NULL,
-      default => $entity && $entity->hasField($caption_field) ? ($entity->get($caption_field)->get(0)->getValue() ?? NULL) : NULL,
+      default => $entity && $entity->hasField($caption_field) ? ($entity->get($caption_field)->get($delta)->getValue() ?? NULL) : NULL,
     };
   }
 
