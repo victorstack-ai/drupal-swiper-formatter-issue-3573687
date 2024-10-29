@@ -123,10 +123,10 @@ interface SwiperInterface {
   /**
    * Generate unique ID for swiper, or the other element(s).
    *
-   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
-   *   A field definition object.
    * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
    *   Entity to which the field is attached. Or referenced entity if opted so.
+   * @param null|\Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   A field definition object.
    * @param string|null $view_mode
    *   Display (view) mode machine name.
    * @param string|null $delta
@@ -135,7 +135,7 @@ interface SwiperInterface {
    * @return string
    *   Unique string to be used as attribute (id) or similar.
    */
-  public function elementId(FieldDefinitionInterface $field_definition, FieldableEntityInterface $entity, ?string $view_mode = NULL, ?string $delta = NULL): string;
+  public function elementId(FieldableEntityInterface $entity, ? FieldDefinitionInterface $field_definition = NULL, ?string $view_mode = NULL, ?string $delta = NULL): string;
 
   /**
    * Define swiper's theme render-able array.

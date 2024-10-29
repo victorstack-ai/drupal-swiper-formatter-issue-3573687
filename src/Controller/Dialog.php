@@ -132,7 +132,7 @@ class Dialog extends ControllerBase {
       $content = $view_builder->view($entity, $view_mode);
     }
 
-    $id = $this->swiperBase->elementId($entity->get($field)->getFieldDefinition(), $entity, $view_mode, (string) $delta);
+    $id = $this->swiperBase->elementId($entity, NULL, $view_mode, (string) $delta);
     return [
       '#theme' => 'swiper_dialog',
       '#id' => Html::getUniqueId($id),

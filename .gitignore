@@ -1,8 +1,7 @@
 /*.log
+/*.patch
+/*.lock
 /mix-manifest.json
 /node_modules/
 /assets
-
-# Ignore lock files.
 /package-lock.json
-/yarn.lock

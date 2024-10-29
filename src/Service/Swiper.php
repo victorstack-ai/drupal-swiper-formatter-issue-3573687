@@ -198,7 +198,7 @@ class Swiper implements SwiperInterface {
     if ($swiper_entity = $this->getSwiper($template)) {
       /** @var \Drupal\swiper_formatter\SwiperFormatterInterface $swiper_entity */
       $settings += $swiper_entity->get('swiper_options');
-      $id = $this->elementId($field_definition, $entity);
+      $id = $this->elementId($entity, $field_definition);
       $settings['id'] = $id;
       $elements['settings'] = $settings;
     }
@@ -210,7 +210,7 @@ class Swiper implements SwiperInterface {
    */
   public function renderSwiper(FieldableEntityInterface $entity, array $output, array $settings): array {
 
-    $id = $settings['id'] ?? $this->elementId($entity->get($settings['field_name'])->getFieldDefinition(), $entity);
+    $id = $settings['id'] ?? $this->elementId($entity, $entity->get($settings['field_name'])->getFieldDefinition());
 
     // Breakpoints check.
     $settings['has_breakpoint_navigation'] = FALSE;
@@ -276,21 +276,17 @@ class Swiper implements SwiperInterface {
   /**
    * {@inheritdoc}
    */
-  public function elementId(FieldDefinitionInterface $field_definition, FieldableEntityInterface $entity, ?string $view_mode = NULL, ?string $delta = NULL): string {
-    $id = 'default';
+  public function elementId(FieldableEntityInterface $entity, ?FieldDefinitionInterface $field_definition = NULL, ?string $view_mode = NULL, ?string $delta = NULL): string {
+    $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id();
+    if ($field_definition) {
+      $id .= '-' . $field_definition->getName();
+    }
     // Has no view mode nor delta param.
-    if (!$view_mode && is_null($delta)) {
-      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $field_definition->getName();
+    if ($view_mode) {
+      $id .= '-' . $view_mode;
     }
-    elseif ($view_mode && $delta == NULL) {
-      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $field_definition->getName() . '-' . $view_mode;
-    }
-    elseif (!$view_mode && $delta != NULL) {
-      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $field_definition->getName() . '-' . $delta;
-    }
-    // Has both params.
-    elseif ($view_mode && !is_null($delta)) {
-      $id = $entity->getEntityTypeId() . '-' . $entity->bundle() . '-' . $entity->id() . '-' . $field_definition->getName() . '-' . $delta . '-' . $view_mode;
+    if ($delta) {
+      $id .= '-' . $delta;
     }
     return Html::getUniqueId($id);
   }
