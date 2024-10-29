@@ -62,6 +62,7 @@ class SwiperFormatterSettings extends FormElementBase {
       ],
       '#prefix' => '<div id="swiper-dialog-wrapper">',
       '#suffix' => '</div>',
+      '#attributes' => ['data-disable-refocus' => 'true'],
     ];
   }
 
@@ -291,7 +292,6 @@ class SwiperFormatterSettings extends FormElementBase {
       '#description' => $description_link->toRenderable() + [
         '#access' => $default_values['dialog_view_mode_access'],
       ],
-      '#input' => TRUE,
       '#value_callback' => [static::class, 'dialogViewMode'],
     ];
     $element['dialog_view_item'] = [
@@ -404,15 +404,15 @@ class SwiperFormatterSettings extends FormElementBase {
    *
    * @param array $element
    *   This element.
-   * @param bool $input
-   *   If form is changed.
+   * @param null|bool $input
+   *   If form is changed. Views returns null here.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   A current form state object.
    *
    * @return string
    *   A default value for a dialog view mode element.
    */
-  public static function dialogViewMode(array $element, bool $input, FormStateInterface $form_state): string {
+  public static function dialogViewMode(array $element, NULL|bool $input, FormStateInterface $form_state): string {
     $trigger = $form_state->getTriggeringElement();
     if (is_array($trigger) && str_contains($trigger['#name'], '[dialog_target]')) {
       $dialog_view_mode_parents = array_slice($trigger['#parents'], 0, -1);
