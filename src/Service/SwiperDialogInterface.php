@@ -25,7 +25,7 @@ interface SwiperDialogInterface {
    * @var array
    */
   public const DIALOG_SETTINGS = [
-    'dialog_target' => 'entity',
+    'dialog_target' => 'referenced_entity',
     'dialog_view_mode' => 'default',
     'dialog_view_item' => 'entity',
     'dialog_type' => 'modal',
