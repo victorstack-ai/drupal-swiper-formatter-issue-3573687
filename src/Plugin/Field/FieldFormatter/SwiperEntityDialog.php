@@ -51,10 +51,9 @@ class SwiperEntityDialog extends SwiperEntity {
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $elements = parent::settingsForm($form, $form_state);
-
     $entity_type = $this->fieldDefinition->getTargetEntityTypeId();
     $entity_bundle = $this->fieldDefinition->getTargetBundle();
-    $options = $this->entityDisplayRepository->getViewModeOptionsByBundle($entity_type, $entity_bundle);
+    $options = $entity_bundle ? $this->entityDisplayRepository->getViewModeOptionsByBundle($entity_type, $entity_bundle) : $this->entityDisplayRepository->getViewModeOptions($entity_type);
     $reference_options = $elements['view_mode']['#options'];
     $this->swiperDialog->processSettings($this->getSettings(), $options, $reference_options, $elements);
     return $elements;

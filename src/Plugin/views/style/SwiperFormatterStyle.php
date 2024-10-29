@@ -112,6 +112,14 @@ class SwiperFormatterStyle extends StylePluginBase {
         'custom_link' => $this->options['custom_link'] ?? NULL,
         'entity_type' => 'default',
         'swiper_access' => $this->currentUser->hasPermission('administer swiper'),
+        'caption' => [
+          'value' => $this->options['caption'] ?? NULL,
+          'entity_fields' => [],
+          'field_edit_url' => $this->options['caption_field_edit_url'] ?? NULL,
+        ],
+        // Images specific.
+        'title_field' => NULL,
+        'alt_field' => NULL,
       ],
     ];
 
