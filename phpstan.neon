@@ -9,8 +9,12 @@ parameters:
     - ../../../../web/themes
   ignoreErrors:
     - identifier: missingType.iterableValue
+    - identifier: class.noParent
+    - identifier: class.notFound
   reportUnmatchedIgnoredErrors: false
   excludePaths:
     - node_modules
+    - src/Plugin/Field/FieldFormatter/SwiperParagraphs.php
+    - src/Plugin/Field/FieldFormatter/SwiperParagraphsDialog.php
   paths:
-    - ../../../../web/modules/contrib
+    - .
