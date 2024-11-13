@@ -40,18 +40,6 @@ class SwiperFormatterForm extends EntityForm {
   public EntityStorageInterface $swiperStorage;
 
   /**
-   * Available Swiper modules.
-   *
-   * @var array
-   */
-  public const SWIPER_MODULES = [
-    'navigation',
-    'pagination',
-    'autoplay',
-    'lazy',
-  ];
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): self {

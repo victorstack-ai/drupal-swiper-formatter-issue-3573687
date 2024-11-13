@@ -44,6 +44,25 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
   ];
 
   /**
+   * Gets the swiper options array.
+   *
+   * @return array
+   *   An array containing the raw swiper options.
+   */
+  public function getSwiperOptions();
+
+  /**
+   * Sets the swiper options.
+   *
+   * @param array $options
+   *   An array containing the raw swiper options.
+   *
+   * @return $this
+   *   The class instance this method is called on.
+   */
+  public function setSwiperOptions(array $options);
+
+  /**
    * Returns an array with all the properties that are Swiper.js options.
    *
    * @param bool $check_breakpoint

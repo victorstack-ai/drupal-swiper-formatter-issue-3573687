@@ -92,6 +92,21 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
   /**
    * {@inheritdoc}
    */
+  public function getSwiperOptions() {
+    return $this->get('swiper_options');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSwiperOptions(array $options) {
+    $this->set('swiper_options', $options);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function getSwipers(bool $check_breakpoint = FALSE): array {
     $swiper_options = [];
     $swipers = static::loadMultiple();

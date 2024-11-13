@@ -178,3 +178,38 @@ function swiper_formatter_update_10202(): void {
   $module_installer = \Drupal::service('module_installer');
   $module_installer->install(['token']);
 }
+
+/**
+ * Fix schema affected fields' type.
+ */
+function swiper_formatter_update_10203() {
+  $affected_boolean_values = [
+    'loop',
+    'rewind',
+    'centeredSlides',
+    'mousewheel',
+    'grabCursor',
+    'cssMode',
+  ];
+  $affected_integer_values = ['spaceBetween'];
+  /** @var \Drupal\swiper_formatter\Entity\SwiperFormatterInterface[] $swipers */
+  $swipers = \Drupal::entityTypeManager()->getStorage('swiper_formatter')->loadMultiple();
+  foreach ($swipers as $swiper) {
+    $swiper_options = $swiper->getSwiperOptions();
+    // Fix boolean values.
+    foreach ($affected_boolean_values as $key) {
+      $value = $swiper_options[$key];
+      if (gettype($value) == 'integer') {
+        $swiper_options[$key] = boolval($value);
+      }
+    }
+    // Fix integer values.
+    foreach ($affected_integer_values as $key) {
+      $value = $swiper_options[$key];
+      if (gettype($value) == 'string') {
+        $swiper_options[$key] = intval($value);
+      }
+    }
+    $swiper->save();
+  }
+}

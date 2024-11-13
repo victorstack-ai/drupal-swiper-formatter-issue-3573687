@@ -23,77 +23,78 @@ swiper_formatter.swiper_formatter.*:
     breakpoint:
       type: boolean
       label: Template serves as Breakpoint
-    breakpointsBase:
-      type: string
-      label: Breakpoint base, window or container
     swiper_options:
       type: mapping
       mapping:
-        wrapper:
-          autoHeight:
-            type: boolean
-            label: Auto height
-          width:
-            type: integer
-            label: Fixed width
-          height:
-            type: integer
-            label: Fixed height
-          observer:
-            type: boolean
-            label: Mutation Observer on Swiper and its elements
-          updateOnWindowResize:
-            type: boolean
-            label: Update on window resize
-          resizeObserver:
-            type: boolean
-            label: Use ResizeObserver
-        slides:
-          type: mapping
-          label:
-          mapping:
-            direction:
-              type: string
-              label: Swiping direction
-            effect:
-              type: string
-              label: Swiper transition effect
-            loop:
-              type: boolean
-              label: Continuous loop mode
-            rewind:
-              type: boolean
-              label: Rewind when click on first or last nav button
-            centeredSlides:
-              type: boolean
-              label: Center active slide
-            speed:
-              type: integer
-              label: Duration in ms of transition between slides
-            slidesPerView:
-              type: float
-              label: Number of slides per view
-            spaceBetween:
-              type: integer
-              label: Space between slides
-            slidesPerGroup:
-              type: integer
-              label: Number of slides per group
-            loopedSlides:
-              type: integer
-              label: Number of slides looped at once
-            noSwipingSelector:
-              type: string
-              label: Exclude selectors, no swipe
-            mousewheel:
-              type: boolean
-              label: Enable navigation through slides using mouse wheel
-            grabCursor:
-              type: boolean
-              label: Set grab cursor over slide
-            cssMode:
-              type: boolean
-              label: Use modern CSS Scroll Snap API
+        enabled:
+          type: boolean
+          label: Enabled
+        source:
+          type: string
+          label: Swiper library source
+        autoHeight:
+          type: boolean
+          label: Auto height
+        width:
+          type: integer
+          label: Fixed width
+        height:
+          type: integer
+          label: Fixed height
+        breakpointsBase:
+          type: string
+          label: Breakpoint base, window or container
+        observer:
+          type: boolean
+          label: Mutation Observer on Swiper and its elements
+        updateOnWindowResize:
+          type: boolean
+          label: Update on window resize
+        resizeObserver:
+          type: boolean
+          label: Use ResizeObserver
+        direction:
+          type: string
+          label: Swiping direction
+        effect:
+          type: string
+          label: Swiper transition effect
+        loop:
+          type: boolean
+          label: Continuous loop mode
+        rewind:
+          type: boolean
+          label: Rewind when click on first or last nav button
+        centeredSlides:
+          type: boolean
+          label: Center active slide
+        speed:
+          type: integer
+          label: Duration in ms of transition between slides
+        slidesPerView:
+          type: float
+          label: Number of slides per view
+        spaceBetween:
+          type: integer
+          label: Space between slides
+        slidesPerGroup:
+          type: integer
+          label: Number of slides per group
+        loopedSlides:
+          type: integer
+          label: Number of slides looped at once
+        noSwipingSelector:
+          type: string
+          label: Exclude selectors, no swipe
+        mousewheel:
+          type: boolean
+          label: Enable navigation through slides using mouse wheel
+        grabCursor:
+          type: boolean
+          label: Set grab cursor over slide
+        cssMode:
+          type: boolean
+          label: Use modern CSS Scroll Snap API
         autoplay:
           type: mapping
           label: Autoplay settings
@@ -169,10 +170,18 @@ swiper_formatter.swiper_formatter.*:
           type: sequence
           label: Breakpoints
           sequence:
-            -
-              breakpoint: string
-              swiper_template: string
-              weight: integer
+            type: mapping
+            label: Breakpoints
+            mapping:
+              breakpoint:
+                type: string
+                label: Breakpoint
+              swiper_template:
+                type: string
+                label: Swiper template
+              weight:
+                type: integer
+                label: Weight
         lazy:
           type: mapping
           label: Navigation settings
