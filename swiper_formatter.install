@@ -145,6 +145,7 @@ function swiper_formatter_update_10201(): void {
   foreach ($swipers as $swiper) {
     $swiper_options = $swiper->getSwiperOptions();
     $swiper_options['slidesPerView'] = isset($swiper_options['slidesPerView']) ? (float) $swiper_options['slidesPerView'] : 1.0;
+    $swiper->setSwiperOptions($swiper_options);
     $swiper->save();
   }
 }
