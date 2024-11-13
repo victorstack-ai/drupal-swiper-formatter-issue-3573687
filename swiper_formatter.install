@@ -139,35 +139,14 @@ function swiper_formatter_update_8001(array &$sandbox): void {
 /**
  * Updates "slidesPerView" data type, from integer to float.
  */
-function swiper_formatter_update_10201(array &$sandbox): void {
-  $default_options = [
-    'slidesPerView' => (float) 1,
-  ];
-
-  // Update all existing Swipers.
-  $swipers = SwiperFormatter::getSwipers();
-  if (!empty($swipers)) {
-    $options = $default_options;
-    foreach (array_keys($swipers) as $swiper_id) {
-      $config = \Drupal::service('config.factory')->getEditable('swiper_formatter.swiper_formatter.' . $swiper_id);
-
-      // Get the current value of slidesPerView, and cast to float if it exists.
-      if (isset($config->get('swiper_options')['slidesPerView'])) {
-        $options['slidesPerView'] = (float) $config->get('swiper_options')['slidesPerView'];
-      }
-
-      $swiper_options = array_merge($config->get('swiper_options'), $options);
-      $config->set('swiper_options', $swiper_options);
-      $config->save();
-    }
+function swiper_formatter_update_10201(): void {
+  /** @var \Drupal\swiper_formatter\SwiperFormatterInterface[] $swipers */
+  $swipers = \Drupal::entityTypeManager()->getStorage('swiper_formatter')->loadMultiple();
+  foreach ($swipers as $swiper) {
+    $swiper_options = $swiper->getSwiperOptions();
+    $swiper_options['slidesPerView'] = isset($swiper_options['slidesPerView']) ? (float) $swiper_options['slidesPerView'] : 1.0;
+    $swiper->save();
   }
-
-  // Save default settings file.
-  $config_default = \Drupal::service('config.factory')->getEditable('swiper_formatter.settings');
-  foreach ($default_options as $option_key => $option) {
-    $config_default->set($option_key, $option);
-  }
-  $config_default->save();
 }
 
 /**
@@ -192,7 +171,7 @@ function swiper_formatter_update_10203() {
     'cssMode',
   ];
   $affected_integer_values = ['spaceBetween'];
-  /** @var \Drupal\swiper_formatter\Entity\SwiperFormatterInterface[] $swipers */
+  /** @var \Drupal\swiper_formatter\SwiperFormatterInterface[] $swipers */
   $swipers = \Drupal::entityTypeManager()->getStorage('swiper_formatter')->loadMultiple();
   foreach ($swipers as $swiper) {
     $swiper_options = $swiper->getSwiperOptions();
