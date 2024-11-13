@@ -190,6 +190,7 @@ function swiper_formatter_update_10203() {
         $swiper_options[$key] = intval($value);
       }
     }
+    $swiper->setSwiperOptions($swiper_options);
     $swiper->save();
   }
 }
