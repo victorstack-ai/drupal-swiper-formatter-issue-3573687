@@ -362,7 +362,7 @@ class SwiperFormatterForm extends EntityForm {
     $form['swiper_options']['slides']['slidesPerView'] = [
       '#title' => $this->t('Number of slides per view'),
       '#type' => 'number',
-      '#step' => '0.5',
+      '#step' => '0.1',
       '#description' => $this->t("Decimal value - slides visible at the same time on slider's container."),
       '#default_value' => $default_values['slidesPerView'],
     ];
