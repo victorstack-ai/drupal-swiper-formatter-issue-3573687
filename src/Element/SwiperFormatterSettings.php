@@ -444,7 +444,7 @@ class SwiperFormatterSettings extends FormElementBase {
    *   Caption field options.
    */
   protected static function renderCaption(array &$element, string $formatter_type, array $default_values, array $caption_options = []): void {
-    if (!empty($caption_options)) {
+    if (!empty($caption_options) || $formatter_type == 'image') {
       $description = 'Set field to show up as a slide caption. Note that selected field must be multiple and follow deltas of slides field as well.';
       $description .= $formatter_type == 'views' ? " This field won't show in the render result (within slide) but only as a caption.<br />" : " In the case of a field other than image's alt and title, the caption will show even if the chosen field itself is disabled for this Display. This way, some fields can serve exclusively as a caption.<br />";
       $default_value = $default_values['caption']['value'] ?? NULL;
