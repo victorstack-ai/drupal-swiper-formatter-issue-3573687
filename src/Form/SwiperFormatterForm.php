@@ -796,6 +796,18 @@ class SwiperFormatterForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
+  public function actions(array $form, FormStateInterface $form_state) {
+    $actions = parent::actions($form, $form_state);
+    if (!empty($actions['delete']['#access'])) {
+      // Remove the delete button if the current entity is the default one.
+      $actions['delete']['#access'] = $this->entity->id() != 'default';
+    }
+    return $actions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $breakpoints = $form_state->getValue(['breakpoints', 'breakpoints']);
     foreach ($breakpoints as $key => $breakpoint) {
