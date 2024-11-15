@@ -194,3 +194,10 @@ function swiper_formatter_update_10203() {
     $swiper->save();
   }
 }
+
+/**
+ * Permanently delete the existing global configuration.
+ */
+function swiper_formatter_update_10204() {
+  \Drupal::configFactory()->getEditable('swiper_formatter.settings')->delete();
+}

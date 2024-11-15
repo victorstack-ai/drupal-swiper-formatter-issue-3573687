@@ -58,38 +58,48 @@ class SwiperFormatterForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function form(array $form, FormStateInterface $form_state): array {
+  public function prepareEntity() {
+    parent::prepareEntity();
+    $entity = $this->entity;
+    if ($entity->isNew()) {
+      /** @var \Drupal\swiper_formatter\SwiperFormatterInterface $defaultSwiper */
+      $defaultSwiper = $this->swiperStorage->load('default');
+      $entity->setSwiperOptions($defaultSwiper->getSwiperOptions());
+      $entity->set('status', $defaultSwiper->get('status'));
+    }
+  }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function form(array $form, FormStateInterface $form_state): array {
     $form = parent::form($form, $form_state);
 
-    /* $default_setting = $this->config('swiper_formatter.settings')->getRawData(); */
-    $default_setting = $this->config('swiper_formatter.swiper_formatter.default')->get('swiper_options');
-    /** @var \Drupal\swiper_formatter\Entity\SwiperFormatter $swiper_entity */
-    $swiper_entity = $this->getEntity();
-    $default_values = array_merge($default_setting, $swiper_entity->swiper_options);
+    $entity = $this->entity;
+    $default_values = $entity->getSwiperOptions();
 
     $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
-      '#default_value' => $this->entity->label(),
+      '#default_value' => $entity->label(),
       '#description' => $this->t('Label for the swiper.'),
       '#required' => TRUE,
     ];
 
     $form['id'] = [
       '#type' => 'machine_name',
-      '#default_value' => $this->entity->id(),
+      '#default_value' => $entity->id(),
       '#machine_name' => [
         'exists' => [$this, 'exist'],
       ],
-      '#disabled' => !$this->entity->isNew(),
+      '#disabled' => !$entity->isNew(),
     ];
 
     $form['description'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Description'),
-      '#default_value' => $this->entity->get('description'),
+      '#default_value' => $entity->get('description'),
       '#description' => $this->t('Description for this Swiper template.'),
       '#states' => [
         'visible' => [
@@ -101,7 +111,7 @@ class SwiperFormatterForm extends EntityForm {
     $form['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enabled'),
-      '#default_value' => $this->entity->get('breakpoint') ? TRUE : $this->config('swiper_formatter.swiper_formatter.default')->get('status'),
+      '#default_value' => $entity->get('breakpoint') ? TRUE : $entity->get('status'),
       '#description' => $this->t("Whether Swiper initially enabled. When Swiper is disabled, it will hide all navigation elements and won't respond to any events and interactions."),
       '#states' => [
         'visible' => [
@@ -144,14 +154,14 @@ class SwiperFormatterForm extends EntityForm {
       '#title' => $this->t('Breakpoints'),
       '#description' => $this->t('Reference other Swiper templates as breakpoints, applying breakpoint properties as set there. Only supported options for breakpoints will work. See <a href="https://swiperjs.com/swiper-api#param-breakpoints">Swiper API breakpoints</a>'),
       '#tree' => TRUE,
-      '#open' => !$this->entity->get('breakpoint'),
+      '#open' => !$entity->get('breakpoint'),
       '#id' => 'swiper-breakpoints-wrapper',
     ];
 
     $form['swiper_options']['breakpoints']['breakpoint'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('This template is a Breakpoint template'),
-      '#default_value' => $this->entity->get('breakpoint'),
+      '#default_value' => $entity->get('breakpoint'),
       '#description' => $this->t("Enable to exclude this template from the list of formatters on the various places site-wide. Do not forget to reference it on the main template's form.<br/><strong>Warning:</strong> This will disable and then upon form submit null the options which are un-applicable as breakpoint's property."),
       '#ajax' => [
         'callback' => [get_class($this), 'formAjaxCallback'],
@@ -1175,8 +1185,7 @@ class SwiperFormatterForm extends EntityForm {
    */
   protected function multipleItems(FormStateInterface $form_state, string $key, array $element_child = [], array $params = []): array {
 
-    $default_setting = $this->config('swiper_formatter.settings')->getRawData();
-    $default_values = array_merge($default_setting, $this->entity->swiper_options);
+    $default_values = $this->entity->swiper_options;
     $config = !empty($default_values['breakpoints'][0]) && !empty($default_values['breakpoints'][0]['breakpoint']) ? $default_values['breakpoints'] : [
       [
         'breakpoint' => NULL,
@@ -1211,7 +1220,7 @@ class SwiperFormatterForm extends EntityForm {
         ['data' => $this->t('Swiper template')],
         ['data' => $this->t('Weight')],
       ],
-      '#empty' => $this->t('There is no breakpoints.'),
+      '#empty' => $this->t('There are no breakpoints.'),
       // TableDrag: Each array value is a list of callback arguments for
       // drupal_add_tabledrag(). The #id of the table is automatically
       // prepended; if there is none, an HTML ID is auto-generated.
