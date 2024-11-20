@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -60,6 +61,7 @@ class Swiper implements SwiperInterface {
     protected Token $token,
     protected RedirectDestinationInterface $destination,
     protected MessengerInterface $messenger,
+    protected ModuleHandlerInterface $moduleHandler,
   ) {
     try {
       $this->swiperFormatter = $this->entityTypeManager->getStorage('swiper_formatter');
@@ -235,6 +237,9 @@ class Swiper implements SwiperInterface {
     foreach ($output as &$item) {
       $item = $this->renderSwiperSlide($entity, $settings, $item);
     }
+
+    // Allow other modules to alter settings.
+    $this->moduleHandler->alter('swiper_formatter_settings', $id, $settings);
 
     // Set settings to send to js.
     $drupal_settings['swiper_formatter']['swipers'][$id] = $settings;

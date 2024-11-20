@@ -10,6 +10,7 @@ services:
       '@token',
       '@redirect.destination',
       '@messenger',
+      '@module_handler'
     ]
   swiper_formatter.dialog:
     class: Drupal\swiper_formatter\Service\SwiperDialog
