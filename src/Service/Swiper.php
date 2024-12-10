@@ -210,7 +210,7 @@ class Swiper implements SwiperInterface {
   /**
    * {@inheritdoc}
    */
-  public function renderSwiper(FieldableEntityInterface $entity, array $output, array $settings): array {
+  public function renderSwiper(FieldableEntityInterface $entity, array $output, array $settings, array $theme_functions = []): array {
 
     $id = $settings['id'] ?? $this->elementId($entity, $entity->get($settings['field_name'])->getFieldDefinition());
 
@@ -253,7 +253,7 @@ class Swiper implements SwiperInterface {
     }
 
     $swiper = [
-      '#theme' => 'swiper_formatter',
+      '#theme' => !empty($theme_functions) ? $theme_functions : 'swiper_formatter',
       '#id' => $id,
       '#object' => $entity,
       '#content' => $output,

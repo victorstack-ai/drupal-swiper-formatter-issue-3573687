@@ -7,6 +7,8 @@
 /*eslint no-undef: "error"*/
 (function (Drupal, once) {
   'use strict';
+  // Define active index, needed for Swiper in Dialog.
+  let activeIndex = 0;
 
   /**
    * Drupal.behaviors implementation for Swiper formatter.
@@ -37,6 +39,17 @@
                   swipers[swiperContainer.id].on('breakpoint', (swiperEvent, breakpointParams) => {
                     self.breakpointPagination(swiperEvent, breakpointParams);
                   });
+
+                  // This is a Swiper in the Dialog.
+                  if (context.classList && context.classList.contains('swiper-formatter-dialog')) {
+                    swipers[swiperContainer.id].slideTo(activeIndex);
+                  }
+                  // Initial Swiper on the page, log current slide index.
+                  else {
+                    swipers[swiperContainer.id].on('slideChange', (swiperMain) => {
+                      activeIndex = swiperMain.activeIndex;
+                    });
+                  }
 
                   // A custom links (anywhere on the page) that trigger swiper slides.
                   const triggers = context.querySelectorAll('.swiper-trigger');
@@ -132,9 +145,7 @@
               sibling.querySelector('.swiper-trigger').classList.remove('active');
             });
           }
-
           target.classList.add('active');
-
           const index = target.getAttribute('data-index')
             ? parseInt(target.getAttribute('data-index')) - 1
             : 0;

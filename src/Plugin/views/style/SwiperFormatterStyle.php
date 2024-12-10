@@ -7,6 +7,7 @@ namespace Drupal\swiper_formatter\Plugin\views\style;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\swiper_formatter\Service\SwiperInterface;
@@ -214,26 +215,12 @@ class SwiperFormatterStyle extends StylePluginBase {
 
       foreach ($sets as $index => &$set) {
 
-        $id = isset($this->options['grouping']) && !empty($this->options['grouping']) && !empty($this->options['grouping'][0]) ? Html::getUniqueId('swiper-group-' . $this->options['grouping'][0]['field'] . '-' . $index) : NULL;
-
-        if (!$id) {
-          $id = $this->options['id'];
-        }
         $captions = [];
 
         foreach ($set['#rows'] as $delta => &$row) {
 
           $i = 0;
-          $entity = NULL;
-          if (isset($row['#row'])) {
-            $entity = $row['#row']->_entity;
-          }
-          elseif (isset($row['#theme'])) {
-            $entity = $row['#' . $row['#theme']] ?? NULL;
-          }
-          elseif (isset($row['#entity_type'])) {
-            $entity = $row['#' . $row['#entity_type']] ?? NULL;
-          }
+          $entity = $this->getEntity($row);
 
           // Take care of the caption.
           if (is_object($entity) && isset($this->options['caption']) && !empty($this->options['caption'])) {
@@ -254,23 +241,10 @@ class SwiperFormatterStyle extends StylePluginBase {
             $row['#background'] = $this->parseLinear($i, $delta, 'background', $entity->get($this->options['field_name'])->getValue());
           }
         }
-
-        $output[$index] = [
-          '#theme' => $this->themeFunctions(),
-          '#id' => $id,
-          '#object' => $this->view,
-          '#content' => $set['#rows'],
-          '#settings' => $this->options,
-          '#attributes' => [
-            'id' => $id,
-            'class' => [
-              'swiper-container',
-            ],
-          ],
-        ];
+        // Render Swiper.
+        $output[$index] = $this->swiperBase->renderSwiper($this->getEntity($set['#rows'][0]), $set['#rows'], $this->options, $this->themeFunctions());
       }
     }
-
     return $output;
   }
 
@@ -295,6 +269,29 @@ class SwiperFormatterStyle extends StylePluginBase {
     }
 
     $form_state->setValue(['style_options', 'swiper'], NULL);
+  }
+
+  /**
+   * Find entity to which swiper field is attached within the Views row.
+   *
+   * @param array $row
+   *   Views row array.
+   *
+   * @return \Drupal\Core\Entity\FieldableEntityInterface
+   *   Entity object.
+   */
+  protected function getEntity(array $row): FieldableEntityInterface {
+    $entity = NULL;
+    if (isset($row['#row'])) {
+      $entity = $row['#row']->_entity;
+    }
+    elseif (isset($row['#theme'])) {
+      $entity = $row['#' . $row['#theme']] ?? NULL;
+    }
+    elseif (isset($row['#entity_type'])) {
+      $entity = $row['#' . $row['#entity_type']] ?? NULL;
+    }
+    return $entity;
   }
 
   /**

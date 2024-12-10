@@ -171,6 +171,7 @@ class SwiperDialog implements SwiperDialogInterface {
       'href' => $href,
       'class' => ['use-ajax'],
       'data-dialog-type' => $dialog_options['dialog_type'],
+      'data-index' => $delta,
     ];
 
     if ($title = $dialog_options['dialog_title']) {

@@ -58,7 +58,7 @@ class SwiperFormatterForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function prepareEntity() {
+  public function prepareEntity(): void {
     parent::prepareEntity();
     $entity = $this->entity;
     if ($entity->isNew()) {

@@ -162,7 +162,7 @@ function swiper_formatter_update_10202(): void {
 /**
  * Fix schema affected fields' type.
  */
-function swiper_formatter_update_10203() {
+function swiper_formatter_update_10203(): void {
   $affected_boolean_values = [
     'loop',
     'rewind',

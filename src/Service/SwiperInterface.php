@@ -146,11 +146,13 @@ interface SwiperInterface {
    *   Parent's formatter render array.
    * @param array $settings
    *   Formatter settings array.
+   * @param array $theme_functions
+   *   Swiper theme hooks.
    *
    * @return array
    *   Swiper theme render-able array.
    */
-  public function renderSwiper(FieldableEntityInterface $entity, array $output, array $settings): array;
+  public function renderSwiper(FieldableEntityInterface $entity, array $output, array $settings, array $theme_functions = []): array;
 
   /**
    * Render swiper slide theme.
