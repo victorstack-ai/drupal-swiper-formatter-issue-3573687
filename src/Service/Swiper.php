@@ -233,6 +233,9 @@ class Swiper implements SwiperInterface {
     $pagination_attributes = $this->preparePagination($id, $settings);
     $scrollbar_attributes = $this->prepareScrollbar($id, $settings);
 
+    // Handle automatic slides per view.
+    $settings['slidesPerView'] = !empty($settings['slidesPerView']) ? $settings['slidesPerView'] : 'auto';
+
     // Render slides now.
     foreach ($output as &$item) {
       $item = $this->renderSwiperSlide($entity, $settings, $item);
