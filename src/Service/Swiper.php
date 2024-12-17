@@ -341,6 +341,9 @@ class Swiper implements SwiperInterface {
     // implementation until the main logic is reworked.
     // Just in case it's not an entity, we add a check.
     $keys = $item['#cache']['keys'] ?? [];
+    if (!empty($keys)) {
+      $slide['#cache']['keys'] = $keys;
+    }
     if (in_array('entity_view', $keys)) {
       $slide['#cache']['keys'][] = 'swiper-slide';
     }
