@@ -242,7 +242,7 @@ class Swiper implements SwiperInterface {
     }
 
     // Allow other modules to alter settings.
-    $this->moduleHandler->alter('swiper_formatter_settings', $id, $settings);
+    $this->moduleHandler->alter('swiper_formatter_settings', $id, $settings, $output);
 
     // Set settings to send to js.
     $drupal_settings['swiper_formatter']['swipers'][$id] = $settings;

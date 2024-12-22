@@ -17,12 +17,26 @@
  *   Swiper formatter id.
  * @param array $settings
  *   The swiper formatter settings.
+ * @param array $output
+ *   Content - to becomes slides - render-able array.
  *
  * @see Drupal\swiper_formatter\Service\Swiper::renderSwiper()
  */
-function hook_swiper_formatter_settings_alter($id, array &$settings): void {
+function hook_swiper_formatter_settings_alter(string $id, array &$settings, array $output): void {
   // Alter swiper formatter settings array.
   $settings['slidesPerView'] = 'auto';
+
+  // Or more advanced - alter or define Grid.
+  if ($settings['template'] == 'my_template_id') {
+    $number_of_slides = count($output);
+    $columns = 2;
+    $settings['grid'] = [
+      'rows' => $number_of_slides / $columns,
+      'fill' => 'row',
+    ];
+    $settings['spaceBetween'] = 20;
+    $settings['slidesPerView'] = $columns;
+  }
 }
 
 /**
