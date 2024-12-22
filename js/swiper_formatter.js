@@ -49,6 +49,16 @@
                     swipers[swiperContainer.id].on('slideChange', (swiperMain) => {
                       activeIndex = swiperMain.activeIndex;
                     });
+                    const slides = swiperContainer.querySelectorAll(
+                      '.swiper-slide a[data-dialog-type]'
+                    );
+                    if (slides.length > 1) {
+                      slides.forEach((slide, index) => {
+                        slide.addEventListener('click', () => {
+                          activeIndex = index;
+                        });
+                      });
+                    }
                   }
 
                   // A custom links (anywhere on the page) that trigger swiper slides.
