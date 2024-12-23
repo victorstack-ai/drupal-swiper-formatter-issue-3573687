@@ -31,7 +31,7 @@ function hook_swiper_formatter_settings_alter(string $id, array &$settings, arra
     $number_of_slides = count($output);
     $columns = 2;
     $settings['grid'] = [
-      'rows' => $number_of_slides / $columns,
+      'rows' => round($number_of_slides / $columns),
       'fill' => 'row',
     ];
     $settings['spaceBetween'] = 20;
