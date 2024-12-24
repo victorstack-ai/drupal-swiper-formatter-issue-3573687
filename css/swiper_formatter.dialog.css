@@ -10,7 +10,7 @@
 }
 .ui-dialog .ui-dialog-titlebar-close.titlebar-hidden {
   position: absolute;
-  z-index: 10;
+  z-index: 102;
   left: auto;
   top: auto;
   background: #111111;
