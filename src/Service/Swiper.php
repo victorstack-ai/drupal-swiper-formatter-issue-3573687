@@ -232,6 +232,7 @@ class Swiper implements SwiperInterface {
     $navigation_attributes = $this->prepareNavigation($id, $settings);
     $pagination_attributes = $this->preparePagination($id, $settings);
     $scrollbar_attributes = $this->prepareScrollbar($id, $settings);
+    $this->prepareGrid($settings);
 
     // Handle automatic slides per view.
     $settings['slidesPerView'] = !empty($settings['slidesPerView']) ? $settings['slidesPerView'] : 'auto';
@@ -516,6 +517,23 @@ class Swiper implements SwiperInterface {
     }
     else {
       unset($settings['breakpoints']);
+    }
+  }
+
+  /**
+   * Prepares grid for the swiper config.
+   *
+   * @param array $settings
+   *   Referenced formatter settings array.
+   */
+  protected function prepareGrid(array &$settings): void {
+    if (isset($settings['grid'])) {
+      if (empty($settings['grid']['enabled'])) {
+        unset($settings['grid']);
+      }
+      else {
+        unset($settings['grid']['enabled']);
+      }
     }
   }
 

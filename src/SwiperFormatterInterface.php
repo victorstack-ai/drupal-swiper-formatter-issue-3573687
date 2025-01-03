@@ -29,6 +29,7 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
     'scrollbar',
     'autoplay',
     'lazy',
+    'grid',
   ];
 
   /**

@@ -467,6 +467,49 @@ class SwiperFormatterForm extends EntityForm {
       ],
     ];
 
+    $form['swiper_options']['grid'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Grid settings'),
+      '#open' => TRUE,
+      '#description' => $this->t('Swiper Grid feature, see <a target="_blank" href="https://swiperjs.com/swiper-api#param-grid">Swiper.js | Grid</a>.'),
+    ];
+
+    $form['swiper_options']['grid']['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable grid'),
+      '#default_value' => $default_values['grid']['enabled'],
+    ];
+
+    $form['swiper_options']['grid']['rows'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Rows'),
+      '#default_value' => $default_values['grid']['rows'],
+      '#min' => 0,
+      '#description' => $this->t('Set numbers of slides per column, for multirow layout.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="swiper_options[grid][enabled]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['swiper_options']['grid']['fill'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Fill'),
+      '#options' => [
+        'row' => $this->t('Row'),
+        'column' => $this->t('Column'),
+      ],
+      '#empty_option' => $this->t('- Select -'),
+      '#default_value' => $default_values['grid']['fill'],
+      '#description' => $this->t('Defines how slides should fill rows, by column or by row.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="swiper_options[grid][enabled]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     $form['swiper_options']['navigation'] = [
       '#type' => 'details',
       '#title' => $this->t('Navigation settings'),

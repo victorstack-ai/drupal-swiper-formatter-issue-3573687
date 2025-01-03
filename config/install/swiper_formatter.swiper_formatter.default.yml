@@ -28,6 +28,10 @@ swiper_options:
   mousewheel: false
   grabCursor: false
   cssMode: false
+  grid:
+    enabled: false
+    rows: 1
+    fill: column
   autoplay:
     enabled: false
     delay: 4000

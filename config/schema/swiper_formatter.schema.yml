@@ -95,6 +95,19 @@ swiper_formatter.swiper_formatter.*:
         cssMode:
           type: boolean
           label: Use modern CSS Scroll Snap API
+        grid:
+          type: mapping
+          label: Grid settings
+          mapping:
+            enabled:
+              type: boolean
+              label: Enable/disable grid
+            rows:
+              type: integer
+              label: Number of rows
+            fill:
+              type: string
+              label: Fill mode
         autoplay:
           type: mapping
           label: Autoplay settings

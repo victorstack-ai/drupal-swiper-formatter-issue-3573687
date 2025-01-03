@@ -6,6 +6,10 @@ label: 'Breakpoint480 Template'
 description: ''
 breakpoint: true
 swiper_options:
+  grid:
+    enabled: false
+    rows: 1
+    fill: column
   autoplay:
     enabled: false
     delay: 4000

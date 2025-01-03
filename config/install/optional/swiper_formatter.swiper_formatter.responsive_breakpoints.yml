@@ -6,6 +6,10 @@ label: 'Responsive breakpoints'
 description: "This template and three other referenced below as Breakpoints create an example for setting responsive logic according to Swiper's rules and mobile-first approach. Swiper's operator for breakpoints is >= therefore this, main template will apply for viewports that are 480px or less."
 breakpoint: false
 swiper_options:
+  grid:
+    enabled: false
+    rows: 1
+    fill: column
   autoplay:
     enabled: false
     delay: 4000

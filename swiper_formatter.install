@@ -201,3 +201,21 @@ function swiper_formatter_update_10203(): void {
 function swiper_formatter_update_10204(): void {
   \Drupal::configFactory()->getEditable('swiper_formatter.settings')->delete();
 }
+
+/**
+ * Add default grid options to swiper formatters.
+ */
+function swiper_formatter_update_10205(): void {
+  /** @var \Drupal\swiper_formatter\SwiperFormatterInterface[] $swipers */
+  $swipers = \Drupal::entityTypeManager()->getStorage('swiper_formatter')->loadMultiple();
+  foreach ($swipers as $swiper) {
+    $swiper_options = $swiper->getSwiperOptions();
+    $swiper_options['grid'] = [
+      'enabled' => FALSE,
+      'rows' => 1,
+      'fill' => 'column',
+    ];
+    $swiper->setSwiperOptions($swiper_options);
+    $swiper->save();
+  }
+}
