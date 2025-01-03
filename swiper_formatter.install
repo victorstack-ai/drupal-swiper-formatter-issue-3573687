@@ -49,9 +49,9 @@ function swiper_formatter_requirements(string $phase): array {
             '@swiper' => $swiper_data['label'],
             '@local' => ucfirst(str_replace('_', ' ', $swiper_data['properties']['swiper_options']['source'])),
             '@js_name' => $js_library_type,
-            ':js_url' => 'https://unpkg.com/swiper@8/' . $js_library_type,
+            ':js_url' => 'https://unpkg.com/swiper@11/' . $js_library_type,
             '@css_name' => $css_library_type,
-            ':css_url' => 'https://unpkg.com/swiper@8/' . $css_library_type,
+            ':css_url' => 'https://unpkg.com/swiper@11/' . $css_library_type,
           ]);
           $requirements['swiper_formatter_' . $swiper_id]['severity'] = REQUIREMENT_ERROR;
         }
@@ -62,7 +62,7 @@ function swiper_formatter_requirements(string $phase): array {
   if (empty($requirements)) {
     $requirements['swiper_formatter'] = [];
     $requirements['swiper_formatter']['title'] = t('Swiper.js library source');
-    $requirements['swiper_formatter']['description'] = $has_local ? t('Installed in <em>/libraries/swiper</em> folder.') : t('Set to remote cdn <em>//unpkg.com/swiper@8/</em> see <em>swiper_formatter.libraries.yml</em>.');
+    $requirements['swiper_formatter']['description'] = $has_local ? t('Installed in <em>/libraries/swiper</em> folder.') : t('Set to remote cdn <em>//unpkg.com/swiper@11/</em> see <em>swiper_formatter.libraries.yml</em>.');
     $requirements['swiper_formatter']['severity'] = REQUIREMENT_OK;
   }
   return $requirements;
