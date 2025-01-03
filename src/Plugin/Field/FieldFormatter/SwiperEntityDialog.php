@@ -55,6 +55,7 @@ class SwiperEntityDialog extends SwiperEntity {
     $entity_bundle = $this->fieldDefinition->getTargetBundle();
     $options = $entity_bundle ? $this->entityDisplayRepository->getViewModeOptionsByBundle($entity_type, $entity_bundle) : $this->entityDisplayRepository->getViewModeOptions($entity_type);
     $reference_options = $elements['view_mode']['#options'];
+    $elements['view_mode']['#description'] = $this->t('Make sure the rendered markup does not contain links, otherwise the dialog will not work.');
     $this->swiperDialog->processSettings($this->getSettings(), $options, $reference_options, $elements);
     return $elements;
   }
