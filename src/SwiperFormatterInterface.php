@@ -16,14 +16,14 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
    *
    * @var string
    */
-  public const string DEFAULT_TEMPLATE = 'default';
+  public const DEFAULT_TEMPLATE = 'default';
 
   /**
    * Default Swiper's modules.
    *
    * @var array
    */
-  public const array SWIPER_MODULES = [
+  public const SWIPER_MODULES = [
     'navigation',
     'pagination',
     'scrollbar',
@@ -37,7 +37,7 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
    *
    * @var array
    */
-  public const array BREAKPOINT_OPTIONS = [
+  public const BREAKPOINT_OPTIONS = [
     'slidesPerView',
     'spaceBetween',
     'navigation',
