@@ -279,19 +279,33 @@ class SwiperFormatterStyle extends StylePluginBase {
    *
    * @return \Drupal\Core\Entity\FieldableEntityInterface
    *   Entity object.
+   *
+   * @throws \Exception
+   *   Thrown when an entity cannot be found within the views row array.
    */
   protected function getEntity(array $row): FieldableEntityInterface {
-    $entity = NULL;
-    if (isset($row['#row'])) {
-      $entity = $row['#row']->_entity;
+    if (isset($row['#row']->_entity) && $row['#row']->_entity instanceof FieldableEntityInterface) {
+      return $row['#row']->_entity;
     }
-    elseif (isset($row['#theme'])) {
-      $entity = $row['#' . $row['#theme']] ?? NULL;
+    elseif (isset($row['entity']['#theme']) && isset($row['entity']['#' . $row['entity']['#theme']]) && $row['entity']['#' . $row['entity']['#theme']] instanceof FieldableEntityInterface) {
+      return $row['entity']['#' . $row['entity']['#theme']];
     }
-    elseif (isset($row['#entity_type'])) {
-      $entity = $row['#' . $row['#entity_type']] ?? NULL;
+    elseif (isset($row['#theme']) && isset($row['#' . $row['#theme']]) && $row['#' . $row['#theme']] instanceof FieldableEntityInterface) {
+      return $row['#' . $row['#theme']];
     }
-    return $entity;
+    elseif (isset($row['#entity_type']) && isset($row['#' . $row['#entity_type']]) && $row['#' . $row['#entity_type']] instanceof FieldableEntityInterface) {
+      return $row['#' . $row['#entity_type']];
+    }
+    else {
+      foreach ($row as $property) {
+        if ($property instanceof FieldableEntityInterface) {
+          return $property;
+        }
+      }
+    }
+
+    // An entity could not be found in this row.
+    throw new \Exception('An entity could not be found within this views row.');
   }
 
   /**
