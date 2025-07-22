@@ -536,6 +536,51 @@ class SwiperFormatterForm extends EntityForm {
       ],
     ];
 
+    $form['swiper_options']['keyboard'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Keyboard control'),
+      '#open' => TRUE,
+      '#description' => $this->t('Swipe with keyboard keys, see <a target="_blank" href="https://swiperjs.com/swiper-api#keyboard-control">Swiper | Keyboard control</a>.'),
+      '#states' => [
+        'disabled' => [
+          ':input[data-drupal-selector="edit-breakpoints-breakpoints-breakpoint"]' => ['checked' => TRUE],
+        ],
+        'visible' => [
+          ':input[data-drupal-selector="edit-breakpoints-breakpoints-breakpoint"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+
+    $form['swiper_options']['keyboard']['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable Keyboard control'),
+      '#default_value' => $default_values['keyboard']['enabled'],
+    ];
+
+    $form['swiper_options']['keyboard']['onlyInViewport'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Only swiper in viewport'),
+      '#description' => $this->t('When enabled it will control sliders that are currently in viewport.'),
+      '#default_value' => $default_values['keyboard']['onlyInViewport'],
+      '#states' => [
+        'visible' => [
+          ':input[name="swiper_options[keyboard][enabled]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['swiper_options']['keyboard']['pageUpDown'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Page Up/Page Down keys'),
+      '#description' => $this->t('When enabled it will enable keyboard navigation by Page Up and Page Down keys.'),
+      '#default_value' => $default_values['keyboard']['pageUpDown'],
+      '#states' => [
+        'visible' => [
+          ':input[name="swiper_options[keyboard][enabled]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     $form['swiper_options']['autoplay'] = [
       '#type' => 'details',
       '#title' => $this->t('Autoplay settings'),
@@ -913,6 +958,7 @@ class SwiperFormatterForm extends EntityForm {
             else {
               $element = $form[$key][$option] ?? [];
             }
+
             if (!empty($element) && !empty($value)) {
               $this->elementsHandler($element, $value);
             }

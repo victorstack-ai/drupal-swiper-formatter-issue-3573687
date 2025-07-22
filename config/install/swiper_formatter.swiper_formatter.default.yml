@@ -32,6 +32,10 @@ swiper_options:
     enabled: false
     rows: 1
     fill: column
+  keyboard:
+    enabled: false
+    onlyInViewport: true
+    pageUpDown: true
   autoplay:
     enabled: false
     delay: 4000

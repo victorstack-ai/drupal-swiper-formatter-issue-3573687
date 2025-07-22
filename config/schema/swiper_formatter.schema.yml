@@ -108,6 +108,19 @@ swiper_formatter.swiper_formatter.*:
             fill:
               type: string
               label: Fill mode
+        keyboard:
+          type: mapping
+          label: Keyboard control
+          mapping:
+            enabled:
+              type: boolean
+              label: Enable/disable Keyboard control
+            onlyInViewport:
+              type: boolean
+              label: Only sliders that are currently in viewport
+            pageUpDown:
+              type: boolean
+              label: Navigation with Page Up and Page Down keys
         autoplay:
           type: mapping
           label: Autoplay settings

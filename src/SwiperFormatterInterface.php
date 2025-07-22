@@ -30,6 +30,7 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
     'autoplay',
     'lazy',
     'grid',
+    'keyboard',
   ];
 
   /**
