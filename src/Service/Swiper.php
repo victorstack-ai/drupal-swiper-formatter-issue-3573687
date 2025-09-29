@@ -497,7 +497,7 @@ class Swiper implements SwiperInterface {
     }
     if (!empty($breakpoints)) {
       $settings['breakpoints'] = [];
-      $include = ['slidesPerView', 'slidesPerGroup', 'spaceBetween', 'navigation', 'pagination'];
+      $include = ['slidesPerView', 'slidesPerGroup', 'spaceBetween', 'navigation', 'pagination', 'grid'];
       foreach ($breakpoints as $key => $breakpoint) {
         foreach ($breakpoint as $k => $b) {
           if (in_array($k, $include)) {
