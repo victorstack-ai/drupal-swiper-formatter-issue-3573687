@@ -795,6 +795,86 @@ class SwiperFormatterForm extends EntityForm {
       '#states' => $scrollbar_enabled_state,
     ];
 
+    $form['swiper_options']['zoom'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Zoom settings'),
+      '#open' => TRUE,
+      '#description' => $this->t('Swiper Zoom module, see <a target="_blank" href="https://swiperjs.com/swiper-api#zoom">Swiper.js | Zoom</a>.'),
+      // Zoom options cannot fully be controlled by breakpoint templates, though
+      // it seems that some of its child options might be. Even so, with the
+      // current setup we're going to keep it simple and have it available in
+      // the regular templates only. This can change in the future refactor
+      // plan.
+      '#states' => [
+        'disabled' => [
+          ':input[data-drupal-selector="edit-breakpoints-breakpoints-breakpoint"]' => ['checked' => TRUE],
+        ],
+        'visible' => [
+          ':input[data-drupal-selector="edit-breakpoints-breakpoints-breakpoint"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+
+    $form['swiper_options']['zoom']['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable zoom'),
+      '#default_value' => $default_values['zoom']['enabled'],
+    ];
+
+    $zoom_enabled_state = [
+      'visible' => [
+        ':input[name="swiper_options[zoom][enabled]"]' => ['checked' => TRUE],
+      ],
+    ];
+
+    $form['swiper_options']['zoom']['limitToOriginalSize'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Limit to original size'),
+      '#description' => $this->t('When set to true, the image will not be scaled past 100% of its original size'),
+      '#default_value' => $default_values['zoom']['limitToOriginalSize'],
+      '#states' => $zoom_enabled_state,
+    ];
+
+    $form['swiper_options']['zoom']['maxRatio'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Maximum ratio'),
+      '#description' => $this->t('Maximum image zoom multiplier'),
+      '#default_value' => $default_values['zoom']['maxRatio'],
+      '#states' => $zoom_enabled_state,
+      '#attributes' => [
+        'max' => 30,
+        'min' => 0,
+      ],
+    ];
+
+    $form['swiper_options']['zoom']['minRatio'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Minimal ratio'),
+      '#description' => $this->t('Minimal image zoom multiplier'),
+      '#default_value' => $default_values['zoom']['minRatio'],
+      '#states' => $zoom_enabled_state,
+      '#attributes' => [
+        'max' => 30,
+        'min' => 0,
+      ],
+    ];
+
+    $form['swiper_options']['zoom']['panOnMouseMove'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Pan on mouse move'),
+      '#description' => $this->t('When set to true, a zoomed in image will automatically pan while moving the mouse over the image'),
+      '#default_value' => $default_values['zoom']['panOnMouseMove'],
+      '#states' => $zoom_enabled_state,
+    ];
+
+    $form['swiper_options']['zoom']['toggle'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Toggle'),
+      '#description' => $this->t("Enable/disable zoom-in by slide's double tap"),
+      '#default_value' => $default_values['zoom']['toggle'],
+      '#states' => $zoom_enabled_state,
+    ];
+
     $form['swiper_options']['lazy'] = [
       '#type' => 'details',
       '#title' => $this->t('Lazy loading settings'),

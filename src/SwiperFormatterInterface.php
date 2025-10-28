@@ -31,6 +31,7 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
     'lazy',
     'grid',
     'keyboard',
+    'zoom',
   ];
 
   /**

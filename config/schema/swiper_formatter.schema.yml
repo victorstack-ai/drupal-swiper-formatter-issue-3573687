@@ -191,6 +191,28 @@ swiper_formatter.swiper_formatter.*:
             snapOnRelease:
               type: boolean
               label: Snap slider position to slides on release
+        zoom:
+          type: mapping
+          label: Zoom settings
+          mapping:
+            enabled:
+              type: boolean
+              label: Enable/disable zoom
+            limitToOriginalSize:
+              type: boolean
+              label: When set to true, the image will not be scaled past 100% of its original size
+            maxRatio:
+              type: integer
+              label: Maximum image zoom multiplier
+            minRatio:
+              type: integer
+              label: Minimal image zoom multiplier
+            panOnMouseMove:
+              type: boolean
+              label: When set to true, a zoomed in image will automatically pan while moving the mouse over the image
+            toggle:
+              type: boolean
+              label: Enable/disable zoom-in by slide's double tap
 
         breakpoints:
           type: sequence

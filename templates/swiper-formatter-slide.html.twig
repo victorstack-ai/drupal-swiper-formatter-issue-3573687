@@ -17,6 +17,9 @@
 #}
 {% apply spaceless %}
   <div{{ attributes }}>
+    {% if settings.zoom.enabled %}
+      <div class="swiper-zoom-container">
+    {% endif %}
     {% if background %}
       {% if slide_url %}
         <a href="{{ slide_url }}"><img data-src="{{ background }}" class="swiper-lazy" /></a>
@@ -36,6 +39,9 @@
     {% if caption %}
       <div class="swiper-caption">
         {{ caption }}
+      </div>
+    {% endif %}
+    {% if settings.zoom.enabled %}
       </div>
     {% endif %}
   </div>

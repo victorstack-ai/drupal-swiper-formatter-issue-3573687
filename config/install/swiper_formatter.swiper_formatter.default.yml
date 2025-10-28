@@ -58,6 +58,13 @@ swiper_options:
     dragSize: auto
     hide: true
     snapOnRelease: false
+  zoom:
+    enabled: false
+    limitToOriginalSize: false
+    maxRatio: 3
+    minRatio: 1
+    panOnMouseMove: false
+    toggle: true
   breakpoints:
     -
       weight: 0
