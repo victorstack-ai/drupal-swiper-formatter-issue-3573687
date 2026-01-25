@@ -229,14 +229,7 @@ function swiper_formatter_theme_suggestions_swiper_formatter_view_modes(array $v
  */
 function template_preprocess_swiper_formatter(array &$variables): void {
   // Skip swiper format when number of slides less than two.
-  // @see https://www.drupal.org/project/swiper_formatter/issues/3479245.
-  if (count($variables['content']) < 2) {
-    $current_user = \Drupal::service('current_user');
-    $has_permission = \Drupal::service('permission_checker')->hasPermission('administer swiper_formatter', $current_user);
-    if ($has_permission) {
-      \Drupal::service('messenger')->addWarning(t('The number of slides is less than two, skipping Swiper formatting.'));
-    }
-    // Unset swiper initialization.
+  if (count($variables['content'] ?? []) < 2) {
     $variables['drupalSettings']['swiper_formatter']['swipers'] = [];
   }
 }
