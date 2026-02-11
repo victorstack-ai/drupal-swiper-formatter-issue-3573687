@@ -104,7 +104,7 @@ class SwiperFormatterSettings extends FormElementBase {
       '#type' => 'select',
       '#default_value' => $template,
       '#required' => TRUE,
-      '#options' => SwiperFormatter::getSwiperTemplates() ?: [],
+      '#options' => SwiperFormatter::getSwiperTemplates(TRUE) ?: [],
       '#description' => t('Choose one of the available Swiper templates'),
       '#weight' => -6,
     ];
