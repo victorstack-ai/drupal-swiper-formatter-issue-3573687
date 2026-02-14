@@ -1,0 +1,8 @@
+# @todo This error is temporarily ignored because it will be fixed in https://www.drupal.org/project/swiper_formatter/issues/3573592
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Offset ''\#content'' on array\<int, array\<int\|string, mixed\>\> on left side of \?\? does not exist\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Plugin/Field/FieldFormatter/SwiperEntityDialog.php

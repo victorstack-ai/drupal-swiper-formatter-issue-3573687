@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\swiper_formatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerTrait;
 
@@ -134,7 +133,7 @@ trait SwiperFormatterTrait {
   public function onDependencyRemoval(array $dependencies): bool {
     $changed = parent::onDependencyRemoval($dependencies);
 
-    if ($this->optionsDependenciesDeleted($this, $dependencies)) {
+    if ($this->optionsDependenciesDeleted($dependencies)) {
       $changed = TRUE;
     }
     return $changed;
@@ -143,19 +142,17 @@ trait SwiperFormatterTrait {
   /**
    * If a dependency is going to be deleted, set the option set to default.
    *
-   * @param \Drupal\Core\Field\FormatterBase $formatter
-   *   The formatter has this trait.
    * @param array $dependencies_deleted
    *   An array of dependencies that will be deleted.
    *
    * @return bool
    *   If option set dependencies changed.
    */
-  protected function optionsDependenciesDeleted(FormatterBase $formatter, array $dependencies_deleted): bool {
-    $option_id = $formatter->getSetting('template');
+  protected function optionsDependenciesDeleted(array $dependencies_deleted): bool {
+    $option_id = $this->getSetting('template');
     if ($option_id && ($options = $this->swiperBase->getSwiper($option_id))) {
       if (!empty($dependencies_deleted[$options->getConfigDependencyKey()]) && in_array($options->getConfigDependencyName(), $dependencies_deleted[$options->getConfigDependencyKey()])) {
-        $formatter->setSetting('template', NULL);
+        $this->setSetting('template', NULL);
         return TRUE;
       }
       return FALSE;

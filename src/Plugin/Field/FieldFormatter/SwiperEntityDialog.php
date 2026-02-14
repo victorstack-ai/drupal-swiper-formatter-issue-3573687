@@ -74,8 +74,6 @@ class SwiperEntityDialog extends SwiperEntity {
 
   /**
    * {@inheritdoc}
-   *
-   * @phpstan-ignore-next-line
    */
   public function viewElements(FieldItemListInterface $items, $langcode): array {
     $elements = parent::viewElements($items, $langcode);

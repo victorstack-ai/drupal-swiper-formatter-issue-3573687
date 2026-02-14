@@ -485,7 +485,7 @@ class SwiperFormatterForm extends EntityForm {
       '#title' => $this->t('Rows'),
       '#default_value' => $default_values['grid']['rows'],
       '#min' => 0,
-      '#description' => $this->t('Set numbers of slides per column, for multirow layout.'),
+      '#description' => $this->t('Set numbers of slides per column, for multi-row layout.'),
       '#states' => [
         'visible' => [
           ':input[name="swiper_options[grid][enabled]"]' => ['checked' => TRUE],

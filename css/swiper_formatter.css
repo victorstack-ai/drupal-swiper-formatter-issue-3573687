@@ -1,8 +1,8 @@
 /* It seems like swipers may be quite unstable without this two first rules */
 .swiper-container {
-  margin: 1rem auto 1rem auto;
-  overflow: hidden;
   position: relative;
+  overflow: hidden;
+  margin: 1rem auto 1rem auto;
 }
 
 .swiper-container:not(.slides-multiple) .swiper-slide {

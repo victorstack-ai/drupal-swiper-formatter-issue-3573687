@@ -111,7 +111,6 @@ function swiper_formatter_theme_suggestions_swiper_formatter(array $variables): 
 
   $suggestions = [];
 
-  /** @var \Drupal\views\ViewExecutable $variables['object'] */
   if ($variables['object'] instanceof ViewExecutable) {
     $suggestions[] = 'swiper_formatter__' . $variables['object']->id();
     $suggestions[] = 'swiper_formatter__' . $variables['object']->id() . '__' . $variables['object']->current_display;
@@ -164,7 +163,6 @@ function swiper_formatter_theme_suggestions_swiper_formatter_slide(array $variab
   // Twig templates based on Swiper view data.
   if (isset($variables['slide']) && isset($variables['object'])) {
 
-    /** @var \Drupal\views\ViewExecutable $variables['object'] */
     if ($variables['object'] instanceof ViewExecutable) {
       $suggestions[] = 'swiper_formatter_slide__' . $variables['object']->id();
       $suggestions[] = 'swiper_formatter_slide__' . $variables['object']->id() . '__' . $variables['object']->current_display;

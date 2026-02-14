@@ -12,6 +12,7 @@ declare(strict_types=1);
  * Install, update, and uninstall functions for the Swiper formatter module.
  */
 
+use Drupal\Core\Extension\Requirement\RequirementSeverity;
 use Drupal\swiper_formatter\Entity\SwiperFormatter;
 
 /**
@@ -53,7 +54,7 @@ function swiper_formatter_requirements(string $phase): array {
             '@css_name' => $css_library_type,
             ':css_url' => 'https://unpkg.com/swiper@11/' . $css_library_type,
           ]);
-          $requirements['swiper_formatter_' . $swiper_id]['severity'] = REQUIREMENT_ERROR;
+          $requirements['swiper_formatter_' . $swiper_id]['severity'] = RequirementSeverity::Error;
         }
       }
     }
@@ -63,7 +64,7 @@ function swiper_formatter_requirements(string $phase): array {
     $requirements['swiper_formatter'] = [];
     $requirements['swiper_formatter']['title'] = t('Swiper.js library source');
     $requirements['swiper_formatter']['description'] = $has_local ? t('Installed in <em>/libraries/swiper</em> folder.') : t('Set to remote cdn <em>//unpkg.com/swiper@11/</em> see <em>swiper_formatter.libraries.yml</em>.');
-    $requirements['swiper_formatter']['severity'] = REQUIREMENT_OK;
+    $requirements['swiper_formatter']['severity'] = RequirementSeverity::OK;
   }
   return $requirements;
 }

@@ -25,7 +25,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Template\Attribute;
 use Drupal\swiper_formatter\Entity\SwiperFormatter;
-use Drupal\swiper_formatter\SwiperFormatterInterface;
 use Drupal\token\Token;
 
 /**
@@ -488,10 +487,10 @@ class Swiper implements SwiperInterface {
     $breakpoints = [];
     foreach ($settings['breakpoints'] as $breakpoint) {
       if (isset($breakpoint['swiper_template'])) {
-        /** @var \Drupal\swiper_formatter\Entity\SwiperFormatter $breakpoint_template */
         $breakpoint_template = $this->getSwiper($breakpoint['swiper_template']);
-        if ($breakpoint_template instanceof SwiperFormatterInterface && !empty($breakpoint['breakpoint'])) {
-          $breakpoints[$breakpoint['breakpoint']] = $breakpoint_template->swiper_options;
+        if ($breakpoint_template !== NULL && !empty($breakpoint['breakpoint'])) {
+          /** @var \Drupal\swiper_formatter\SwiperFormatterInterface $breakpoint_template */
+          $breakpoints[$breakpoint['breakpoint']] = $breakpoint_template->getSwiperOptions();
         }
       }
     }

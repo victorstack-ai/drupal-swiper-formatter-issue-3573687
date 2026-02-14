@@ -3,10 +3,8 @@
  * Init instances of Swiper on any page.
  */
 
-/*global Drupal, once, Swiper*/
-/*eslint no-undef: "error"*/
+/* global Swiper */
 (function (Drupal, once) {
-  'use strict';
   // Define active index, needed for Swiper in Dialog.
   let activeIndex = 0;
 
@@ -16,24 +14,24 @@
    * Register and initialize all Swiper instances on the page.
    */
   Drupal.behaviors.swiperFormatter = {
-    attach: function (context, settings) {
+    attach(context, settings) {
       const self = this;
-      const swiper_formatter_settings = settings.swiper_formatter || null;
+      const swiperFormatterSettings = settings.swiper_formatter || null;
 
-      if (swiper_formatter_settings && typeof swiper_formatter_settings.swipers !== 'undefined') {
-        const swiper = typeof Swiper !== 'undefined' ? Swiper : (window.SwiperFormatter ?? null);
-        let swipers = {};
+      if (swiperFormatterSettings && typeof swiperFormatterSettings.swipers !== 'undefined') {
+        const Sniper = typeof Swiper !== 'undefined' ? Swiper : (window.SwiperFormatter ?? null);
+        const swipers = {};
         once('swiperFormatterInit', '.swiper-container', context).forEach(
           function (swiperContainer) {
             if (swiperContainer.id) {
-              const swiperSettings = swiper_formatter_settings.swipers[swiperContainer.id];
-              if (typeof swiperSettings === 'object' && swiper) {
+              const swiperSettings = swiperFormatterSettings.swipers[swiperContainer.id];
+              if (typeof swiperSettings === 'object' && Sniper) {
                 if (swiperSettings.pagination.type === 'progressbar') {
                   swiperContainer.classList.add('progressbar');
                 }
 
                 // Initialize Swiper now.
-                swipers[swiperContainer.id] = new swiper('#' + swiperContainer.id, swiperSettings);
+                swipers[swiperContainer.id] = new Sniper(`#${swiperContainer.id}`, swiperSettings);
                 if (swipers[swiperContainer.id]) {
                   // A special care for dynamic and/or clickable bullets.
                   swipers[swiperContainer.id].on('breakpoint', (swiperEvent, breakpointParams) => {
@@ -85,7 +83,7 @@
      * @param {Object} breakpointParams
      *  An object containing properties of current set breakpoint.
      */
-    breakpointPagination: function (swiperEvent, breakpointParams) {
+    breakpointPagination(swiperEvent, breakpointParams) {
       if (breakpointParams.pagination && breakpointParams.pagination.enabled) {
         const paginationWrapper = swiperEvent.pagination.el;
         if (paginationWrapper) {
@@ -145,7 +143,7 @@
      *  </ul>
      * @endcode
      */
-    registerTriggers: function (swiper, triggers) {
+    registerTriggers(swiper, triggers) {
       triggers.forEach(function (trigger) {
         trigger.addEventListener('click', (e) => {
           const target = e.currentTarget || e.target;
@@ -157,7 +155,7 @@
           }
           target.classList.add('active');
           const index = target.getAttribute('data-index')
-            ? parseInt(target.getAttribute('data-index')) - 1
+            ? parseInt(target.getAttribute('data-index'), 10) - 1
             : 0;
           swiper.slideTo(index);
           return false;

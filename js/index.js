@@ -6,6 +6,7 @@
  *
  * @todo Divide into Swiper separate module's loading - advanced.
  */
+/* eslint-disable import/no-unresolved */
 import Swiper from 'swiper/bundle';
 import 'swiper/css/bundle';
 // A hack?

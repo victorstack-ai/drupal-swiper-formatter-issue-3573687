@@ -223,7 +223,7 @@ class SwiperFormatterStyle extends StylePluginBase {
           $entity = $this->getEntity($row);
 
           // Take care of the caption.
-          if (is_object($entity) && isset($this->options['caption']) && !empty($this->options['caption'])) {
+          if (isset($this->options['caption']) && !empty($this->options['caption'])) {
             $image_subfields = ['alt', 'title'];
             if ($this->options['is_image'] && in_array($this->options['caption'], $image_subfields)) {
               foreach ($entity->get($this->options['is_image'])->getValue() as $img_delta => $img_value) {
@@ -237,7 +237,7 @@ class SwiperFormatterStyle extends StylePluginBase {
               }
             }
           }
-          if (is_object($entity) && isset($this->options['field_name']) && $entity->hasField($this->options['field_name']) && !empty($entity->get($this->options['field_name'])->getValue())) {
+          if (isset($this->options['field_name']) && $entity->hasField($this->options['field_name']) && !empty($entity->get($this->options['field_name'])->getValue())) {
             $row['#background'] = $this->parseLinear($i, $delta, 'background', $entity->get($this->options['field_name'])->getValue());
           }
         }
