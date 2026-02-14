@@ -111,7 +111,7 @@ class SwiperFormatterForm extends EntityForm {
     $form['enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enabled'),
-      '#default_value' => $entity->get('breakpoint') ? TRUE : $entity->get('status'),
+      '#default_value' => $entity->isBreakpoint() ? TRUE : $entity->get('status'),
       '#description' => $this->t("Whether Swiper initially enabled. When Swiper is disabled, it will hide all navigation elements and won't respond to any events and interactions."),
       '#states' => [
         'visible' => [
@@ -154,14 +154,14 @@ class SwiperFormatterForm extends EntityForm {
       '#title' => $this->t('Breakpoints'),
       '#description' => $this->t('Reference other Swiper templates as breakpoints, applying breakpoint properties as set there. Only supported options for breakpoints will work. See <a href="https://swiperjs.com/swiper-api#param-breakpoints">Swiper API breakpoints</a>'),
       '#tree' => TRUE,
-      '#open' => !$entity->get('breakpoint'),
+      '#open' => !$entity->isBreakpoint(),
       '#id' => 'swiper-breakpoints-wrapper',
     ];
 
     $form['swiper_options']['breakpoints']['breakpoint'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('This template is a Breakpoint template'),
-      '#default_value' => $entity->get('breakpoint'),
+      '#default_value' => $entity->isBreakpoint(),
       '#description' => $this->t("Enable to exclude this template from the list of formatters on the various places site-wide. Do not forget to reference it on the main template's form.<br/><strong>Warning:</strong> This will disable and then upon form submit null the options which are un-applicable as breakpoint's property."),
       '#ajax' => [
         'callback' => [get_class($this), 'formAjaxCallback'],

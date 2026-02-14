@@ -92,6 +92,13 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
   /**
    * {@inheritdoc}
    */
+  public function isBreakpoint(): bool {
+    return $this->get('breakpoint');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSwiperOptions() {
     return $this->get('swiper_options');
   }
@@ -112,7 +119,7 @@ class SwiperFormatter extends ConfigEntityBase implements SwiperFormatterInterfa
     $swipers = static::loadMultiple();
     if (!empty($swipers)) {
       foreach ($swipers as $swiper_entity) {
-        if (!$check_breakpoint || !$swiper_entity->get('breakpoint')) {
+        if (!$check_breakpoint || !$swiper_entity->isBreakpoint()) {
           $swiper_options[$swiper_entity->id()] = [
             'id' => $swiper_entity->id(),
             'label' => $swiper_entity->label(),

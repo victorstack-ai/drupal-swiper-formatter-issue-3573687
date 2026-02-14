@@ -45,6 +45,14 @@ interface SwiperFormatterInterface extends ConfigEntityInterface {
   ];
 
   /**
+   * Returns whether the template is a breakpoint.
+   *
+   * @return bool
+   *   TRUE if the breakpoint flag is TRUE, FALSE otherwise.
+   */
+  public function isBreakpoint(): bool;
+
+  /**
    * Gets the swiper options array.
    *
    * @return array
