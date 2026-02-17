@@ -70,3 +70,4 @@ swiper_options:
   mousewheel: 0
   grabCursor: 0
   cssMode: 0
+  watchSlidesProgress: 0

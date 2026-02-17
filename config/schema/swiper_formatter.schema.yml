@@ -95,6 +95,9 @@ swiper_formatter.swiper_formatter.*:
         cssMode:
           type: boolean
           label: Use modern CSS Scroll Snap API
+        watchSlidesProgress:
+          type: boolean
+          label: Calculate each slide progress and visibility
         grid:
           type: mapping
           label: Grid settings

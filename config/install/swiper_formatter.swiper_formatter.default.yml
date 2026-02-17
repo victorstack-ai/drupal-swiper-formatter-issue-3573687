@@ -28,6 +28,7 @@ swiper_options:
   mousewheel: false
   grabCursor: false
   cssMode: false
+  watchSlidesProgress: false
   grid:
     enabled: false
     rows: 1

@@ -53,3 +53,21 @@ function swiper_formatter_post_update_add_zoom_options(): void {
     $swiper->save();
   }
 }
+
+/**
+ * Add watchSlidesProgress option to swiper formatters.
+ */
+function swiper_formatter_post_update_add_watch_slides_progress_option(): void {
+  /** @var \Drupal\swiper_formatter\SwiperFormatterInterface[] $swipers */
+  $swipers = \Drupal::entityTypeManager()->getStorage('swiper_formatter')->loadMultiple();
+  foreach ($swipers as $swiper) {
+    $swiper_options = $swiper->getSwiperOptions();
+    // Only add the option if it doesn't exist already.
+    if (array_key_exists('watchSlidesProgress', $swiper_options)) {
+      continue;
+    }
+    $swiper_options['watchSlidesProgress'] = FALSE;
+    $swiper->setSwiperOptions($swiper_options);
+    $swiper->save();
+  }
+}

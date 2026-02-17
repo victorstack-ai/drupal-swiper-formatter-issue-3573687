@@ -467,6 +467,21 @@ class SwiperFormatterForm extends EntityForm {
       ],
     ];
 
+    $form['swiper_options']['slides']['watchSlidesProgress'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Watch slides progress'),
+      '#default_value' => $default_values['watchSlidesProgress'] ?? FALSE,
+      '#description' => $this->t('Calculate each slide progress and visibility. Helpful for features like thumbs integration and lazy loading behavior.'),
+      '#states' => [
+        'disabled' => [
+          ':input[data-drupal-selector="edit-breakpoints-breakpoints-breakpoint"]' => ['checked' => TRUE],
+        ],
+        'visible' => [
+          ':input[data-drupal-selector="edit-breakpoints-breakpoints-breakpoint"]' => ['checked' => FALSE],
+        ],
+      ],
+    ];
+
     $form['swiper_options']['grid'] = [
       '#type' => 'details',
       '#title' => $this->t('Grid settings'),
