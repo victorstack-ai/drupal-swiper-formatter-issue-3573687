@@ -21,5 +21,11 @@
   "support": {
     "issues": "https://www.drupal.org/project/issues/swiper_formatter",
     "source": "https://git.drupalcode.org/project/swiper_formatter"
+  },
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }
