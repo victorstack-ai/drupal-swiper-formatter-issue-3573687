@@ -1,37 +1,67 @@
-## Swiper formatter
+# Swiper Formatter
 
-### General Information
+## Introduction
 
-Provides Drupal integration with the one of the most modern swiping/sliding libraries [Swiper](https://swiperjs.com/) which is mobile first, layout and gestures wise, and it provides a huge amount
-of options for designing your own widget.
+Swiper Formatter provides Drupal integration with
+[Swiper](https://swiperjs.com/), one of the most modern swiping and sliding
+libraries available. Swiper is mobile-first in layout and gestures and offers a
+large number of options for designing custom widgets.
 
-This module is not meant to be yet another images slider, or such.
-It is rather a swiping UI widget for almost any kind of content,
-and in both directions horizontal and vertical - markup/text fields,
-media fields (i.e. video), Content entity references fields, Paragraphs,
-Views content in the classic way, some type of fields within Views etc.
+This module is not meant to be yet another image slider. It is a swiping UI
+widget for almost any kind of content, in both horizontal and vertical
+directions: markup/text fields, media fields (e.g., video), content entity
+reference fields, Paragraphs, Views content, and more.
 
-### Features
-- [Swiper's features](https://swiperjs.com/demos) is rather a huge list,
-  a solid group of those are included and mostly tested. Note that combinations
-  of some particular ones are not meant by [Swiper design](https://swiperjs.com/swiper-api).
+Swiper configuration is managed through config entities, making it reusable
+across field formatters and Views styles.
 
-### Swiper.js documentation
-Please check out [Swiper extensive API](https://swiperjs.com/swiper-api) for more in depth documentation.
+For more information, visit the
+[project page](https://www.drupal.org/project/swiper_formatter) on Drupal.org
+or submit bug reports and feature suggestions in the
+[issue queue](https://www.drupal.org/project/issues/swiper_formatter).
 
-### Installation
+## Requirements
 
-1. Fetch module via Composer
-  `composer require drupal/swiper_formatter`
-2. Enable module either via Drupal UI or with Drush
-  `drush en swiper_formatter`
+- Drupal core 10 or 11.
+- The [Token](https://www.drupal.org/project/token) module.
+- The [Swiper](https://swiperjs.com/) JavaScript library, loaded via CDN,
+  a local library path, or the bundled asset.
 
-### Use
-For this and any further info, please check [module's page](https://www.drupal.org/project/swiper_formatter).
+## Installation
 
-#### TODO
-- ~~Provide support for Paragraphs~~
-- Develop CKEditor 5 plugin
+Install as you would normally install a contributed Drupal module. For further
+information, see
+[Installing Drupal Modules](https://www.drupal.org/docs/extending-drupal/installing-drupal-modules).
 
-#### Authors/Credits
-* [nk_](https://www.drupal.org/u/nk_)
+```bash
+composer require drupal/swiper_formatter
+drush en swiper_formatter
+```
+
+## Configuration
+
+1. Navigate to **Administration > Configuration > Content authoring >
+   Swiper Formatter** (`/admin/config/content/swiper-formatter`) to manage
+   Swiper configuration entities.
+2. Create or edit a Swiper configuration to set options such as slides per
+   view, autoplay, navigation, pagination, loop, keyboard control, zoom,
+   and breakpoint-specific overrides.
+3. On any entity display (e.g., **Administration > Structure > Content types >
+   [Type] > Manage display**), select one of the Swiper field formatters:
+   - **Swiper Images** / **Swiper Images Dialog**
+   - **Swiper Entity** / **Swiper Entity Dialog**
+   - **Swiper Paragraphs** / **Swiper Paragraphs Dialog**
+   - **Swiper Text** / **Swiper Text Dialog**
+4. In the formatter settings, choose the Swiper configuration entity to apply.
+5. For Views, add a **Swiper Formatter** style plugin under the View's format
+   settings.
+
+For more detailed usage instructions, see the
+[project page](https://www.drupal.org/project/swiper_formatter).
+
+Refer to the [Swiper API documentation](https://swiperjs.com/swiper-api) for
+in-depth information on available options.
+
+## Maintainers
+
+- [nk\_](https://www.drupal.org/u/nk_)

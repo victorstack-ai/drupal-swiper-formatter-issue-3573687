@@ -10,7 +10,7 @@ remote:
   version: VERSION
   license:
     name: MIT
-    url: https://github.com/nolimits4web/swiper/blob/master/LICENSE
+    url: https://github.com/nolimits4web/swiper/blob/main/LICENSE
     gpl-compatible: true
   js:
     //unpkg.com/swiper@11.1.0/swiper-bundle.min.js: { type: external, minified: true }
